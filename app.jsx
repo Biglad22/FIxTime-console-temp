@@ -30,8 +30,8 @@ function App (){
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     return(
-        <div className="bg-[#003338] ">
-            <div className="flex flex-col relative gap-0 mx-0 w-full py-2 px-[1.33rem] sm:px-[2.50rem] md:px-[3.33rem] lg:px-[4.33rem]  xl:px-[5.33rem] pt-0  min-[1500px]:px-0 min-[1500px]:w-[1300px] min-[1500px]:mx-auto h-[100vh]">
+        <div className="bg-[#003338] max-h-[100vh] h-[100vh] overflow-hidden">
+            <div className="flex flex-col relative gap-0 mx-0 w-full py-2 px-[1.33rem] sm:px-[2.50rem] md:px-[3.33rem] lg:px-[4.33rem]  xl:px-[5.33rem] pt-0  min-[1500px]:px-0 min-[1500px]:w-[1300px] min-[1500px]:mx-auto max-h-[100vh] h-[100vh]">
                 <NavBar />
                 {
                     !isLoggedIn ? (<UserAuth onLogin={setIsLoggedIn} />) : (<DashBoard className="flex-1 " />)
@@ -109,8 +109,9 @@ function DashBoard({className=''}) {
                 <FlexerStats className="order-2 sm:max-lg:order-3 col-span-4 md:col-span-2 row-span-2"/>
                 <FlexBanner className="order-3 row-start-4 sm:row-start-1 md:max-lg:row-start-2 col-start-1 sm:max-md:col-start-3 lg:col-start-4 sm:max-lg:order-2 col-span-4 sm:col-span-2 lg:col-span-1 row-span-1 lg:row-span-2" />
                 <MoreStats className=" order-4 col-span-4 row-span-1 hidden md:flex"/>
+                {/* <Skeleton className='order-4 col-span-4 row-span-1 row-start-3  w-full' /> */}
             </div>
-
+            
             {isClaiming && (
                 <div className="w-[100vw] h-[100vh] absolute top-0 left-0 z-[60] bg-[rgba(0,0,0,0.8)]">
                     <RewardClaimPrompt onCloseClaim={()=>setIsClaiming(false)} 
@@ -156,7 +157,7 @@ function TokenBalance({balance = 0, className = '', onClaim}) {
                     className="text-high border-2 border-high py-2 px-6 mb-2 mx-auto sm:mx-0" right
                 />
                 <div className="bg-accent border-2 border-accent font-bold text-[#1D1D1D] py-2 px-6 w-full rounded-[0.5rem] flex items-center justify-center gap-2 ">
-                    <i class='bx bx-hourglass text-xl'></i>
+                    <i className='bx bx-hourglass text-xl'></i>
                     <small className="text-sm">Next claim in {'45h 59m'}</small>
                 </div>
             </div>
@@ -167,21 +168,28 @@ function TokenBalance({balance = 0, className = '', onClaim}) {
 /// account stats
 function FlexerStats({className=''}) {
     return(
-        <div className={`${className} bg-[#3A3A3A] rounded-[0.67rem] flex flex-col justify-between overflow-hidden `}>
-            <div className="p-4 pb-2">
+        <div className={`${className} bg-[#3A3A3A] rounded-[0.67rem] flex flex-col max-h-full justify-between overflow-hidden `}>
+            <div className="p-4 pb-2 flex flex-col overflow-hidden ">
                 
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-2 mb-1">
                     <h3 className="text-high text-2xl font-bold">
-                        <i class='bx bxs-bar-chart-alt-2 mr-3' ></i>
+                        <i className='bx bxs-bar-chart-alt-2 mr-3' ></i>
                         Flexer Stats
                     </h3>
                     <Refresh />
                 </div>
-                
-                <table className="border-none w-full border-separate border-spacing-y-3">
-                    <FlexerStat />
-                    <FlexerStat addOn='test add on' />
-                </table>
+                <div className="w-full flex-1 overflow-auto">
+                    <table className="border-none w-full border-separate border-spacing-y-3 table-auto ">
+                        <tbody>
+                            <FlexerStat />
+                            <FlexerStat addOn='test add on' />
+                            <FlexerStat />
+                            <FlexerStat addOn='test add on' />
+                            <FlexerStat />
+                            <FlexerStat addOn='test add on' />
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <Separator className="h-[2.5rem] md:h-[20%]" />
         </div>
@@ -265,7 +273,7 @@ function CustomBtn({title, icon='', className ='', onClick, right= false}){
 function Refresh({refreshTime='52s'}) {
     return(
         <p className="text-sm text-medium w-fit">
-            <i class='bx bx-revision mr-1'></i>
+            <i className='bx bx-revision mr-1'></i>
             Refresh in {refreshTime}
         </p>
     )
@@ -340,6 +348,17 @@ function ClaimSuccessful({className='', amount = 0, closePrompt}) {
     )
 }
 
+// skeleton for loading component
+function Skeleton (className='') {
+    return(
+        <div className={`p-2 bg-surface min-h-full rounded-[0.68rem] ${className}`}>
+            <div className="animate-pulse flex flex-col gap-2 h-full w-full">
+                <div className="rounded-[0.67rem] bg-[#303030] h-[2rem] w-full"></div>
+                <div className="flex-1 bg-[#303030] rounded-[0.67rem] w-full"></div>
+            </div>
+        </div>
+    )
+}
 
 ///MOUNTS APP
 ReactDOM.createRoot(document.getElementById('app')).render(<App />)
