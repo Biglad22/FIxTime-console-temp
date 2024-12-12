@@ -156,7 +156,7 @@ function TokenBalance({balance = 0, className = '', onClaim}) {
                 <CustomBtn  title='claim' icon="bx-right-arrow-alt" onClick={onClaim}
                     className="text-high border-2 border-high py-2 px-6 mb-2 mx-auto sm:mx-0" right
                 />
-                <div className="bg-accent border-2 border-accent font-bold text-[#1D1D1D] py-2 px-6 w-full rounded-[0.5rem] flex items-center justify-center gap-2 ">
+                <div className="bg-accent border-2 border-accent font-bold text-[#1D1D1D] py-2 px-6 w-full rounded-[0.5rem] flex items-center justify-center gap-2">
                     <i className='bx bx-hourglass text-xl'></i>
                     <small className="text-sm">Next claim in {'45h 59m'}</small>
                 </div>
