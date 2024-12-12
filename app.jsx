@@ -26,12 +26,18 @@ const {useState, useEffect} = React ;
 
 ///============== MAIN HOME PAGE COMPONENT
 function App (){
+
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
     return(
         <div className="bg-[#003338] ">
-            <div className="flex flex-col relative gap-0 mx-0 w-full py-2 px-[1.33rem] sm:px-[2.50rem] md:px-[3.33rem] lg:px-[4.33rem]  xl:px-[5.33rem] pt-0  min-[1500px]:px-0 min-[1500px]:w-[1300px] min-[1500px]:mx-auto h-[100vh] min-h-fit">
+            <div className="flex flex-col relative gap-0 mx-0 w-full py-2 px-[1.33rem] sm:px-[2.50rem] md:px-[3.33rem] lg:px-[4.33rem]  xl:px-[5.33rem] pt-0  min-[1500px]:px-0 min-[1500px]:w-[1300px] min-[1500px]:mx-auto h-[100vh]">
                 <NavBar />
-                {/* <UserAuth /> */}
-                <DashBoard className="flex-1" />
+                {
+                    !isLoggedIn ? (<UserAuth onLogin={setIsLoggedIn} />) : (<DashBoard className="flex-1 " />)
+                }
+                
+                
                 <p className="text-xs text-medium block mt-2">&copy; 2024 FlxTime - All rights reserved</p>
             </div>
         </div>
@@ -75,13 +81,13 @@ function NavBar(){
 }
 
 //User authentication block
-function UserAuth() {
+function UserAuth({onLogin}) {
     return(
         <section>
-            <div className="p-6 flex flex-col gap-2 items-center justify-center h-[60vh] rounded-[0.5rem] bg-[#181818] mb-2">
-                <h1 className="text-4xl font-bold text-high">Hi there, Flexer</h1>
-                <h6 className="text-lg text-medium mb-4">Login to access the console.</h6>
-                <FilledBtn title='login' />
+            <div className="auth-bg p-6 flex flex-col gap-2 items-center justify-center h-[60vh] rounded-[0.5rem] bg-[#181818] mb-2">
+                <h1 className="text-4xl font-bold text-high text-center">Hi there, Flexer</h1>
+                <h6 className="text-lg text-medium text-center mb-4">Login to access the console.</h6>
+                <CustomBtn title='login' className="bg-accent border-2 border-accent text-[#1D1D1D] py-2 px-6" onClick={onLogin} />
             </div>
             <table>
 
@@ -97,14 +103,19 @@ function DashBoard({className=''}) {
     const [isClaiming, setIsClaiming] = useState(false);
 
     return(
-        <div className={`${className} grid grid-cols-4 grid-row-3 grid-flow-dense  gap-4 content-stretch justify-items-stretch p-4 rounded-[0.67rem] bg-[#181818]`}>
-            <TokenBalance className="row-start-1 order-1 col-span-4 sm:col-span-2 lg:col-span-1  row-span-1 lg:row-span-2 " onClaim={()=>setIsClaiming(true)} />
-            <FlexerStats className="order-2 sm:max-lg:order-3 col-span-4 md:col-span-2 row-span-2"/>
-            <FlexBanner className="order-3 row-start-4 sm:row-start-1 md:max-lg:row-start-2 col-start-1 sm:max-md:col-start-3 lg:col-start-4 sm:max-lg:order-2 col-span-4 sm:col-span-2 lg:col-span-1 row-span-1 lg:row-span-2" />
-            <MoreStats className=" order-4 col-span-4 row-span-1 hidden md:flex"/>
+        <div className={`${className} p-0 sm:p-4 rounded-[0.67rem] bg-transparent sm:bg-[#181818] overflow-hidden`}>
+            <div className={`grid grid-cols-4 grid-row-3 grid-flow-dense  gap-4 content-stretch justify-items-stretch max-h-full ${isClaiming ? 'overflow-hidden' : 'overflow-y-auto'}`}>
+                <TokenBalance className="row-start-1 order-1 col-span-4 sm:col-span-2 lg:col-span-1  row-span-1 lg:row-span-2 " onClaim={()=>setIsClaiming(true)} />
+                <FlexerStats className="order-2 sm:max-lg:order-3 col-span-4 md:col-span-2 row-span-2"/>
+                <FlexBanner className="order-3 row-start-4 sm:row-start-1 md:max-lg:row-start-2 col-start-1 sm:max-md:col-start-3 lg:col-start-4 sm:max-lg:order-2 col-span-4 sm:col-span-2 lg:col-span-1 row-span-1 lg:row-span-2" />
+                <MoreStats className=" order-4 col-span-4 row-span-1 hidden md:flex"/>
+            </div>
 
-            {isClaiming && (<RewardClaimPrompt onCloseClaim={()=>setIsClaiming(false)} 
-                className="absolute z-50 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-full sm:w-[50%] md:w-[30%]" />
+            {isClaiming && (
+                <div className="w-[100vw] h-[100vh] absolute top-0 left-0 z-[60] bg-[rgba(0,0,0,0.8)]">
+                    <RewardClaimPrompt onCloseClaim={()=>setIsClaiming(false)} 
+                    className="absolute z-50 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-prompt-width sm:w-[50%] md:w-[30%]" />
+                </div>
             )}
         </div>
     )
