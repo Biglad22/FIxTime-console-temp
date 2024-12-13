@@ -15,7 +15,12 @@ h1,h2,h3,h4,h5,h6,p,small, .navlink{
     background-image: conic-gradient(from 108deg at 60% 50%, #000000 0deg, rgba(102, 102, 102, 0) 360deg);
 }
 
-
+.main-wrapper{
+    height: 100vh;
+    height: 100svh;
+    max-height: 100vh;
+    max-height: 100svh;
+}
 
 .partial-height{
     height: calc( 100% - 2rem );
