@@ -21,7 +21,7 @@ const nav_links_data = [
 
 //============= REACT HOOKS
 
-const {useState, useEffect} = React ;
+const {useState} = React ;
 
 
 ///============== MAIN HOME PAGE COMPONENT
@@ -30,7 +30,7 @@ function App (){
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     return(
-        <div className="bg-[#003338] max-h-[100vh] h-[100vh] overflow-hidden">
+        <div className="bg-[#003338] max-h-[100dvh] h-[100dvh] overflow-hidden">
             <div className="flex flex-col relative gap-0 mx-0 w-full py-2 px-[1.33rem] sm:px-[2.50rem] md:px-[3.33rem] lg:px-[4.33rem]  xl:px-[5.33rem] pt-0  min-[1500px]:px-0 min-[1500px]:w-[1300px] min-[1500px]:mx-auto max-h-[100vh] h-[100vh]">
                 <NavBar />
                 {
