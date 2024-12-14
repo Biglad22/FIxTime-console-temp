@@ -20,13 +20,13 @@ const nav_links_data = [
 
 
 //============= REACT HOOKS
-
-const {useState} = React ;
+const {useState} = React;
 
 
 ///============== MAIN HOME PAGE COMPONENT
 function App (){
 
+    // ///this should be replaced for proper authentication logic to switch between auth page and dashboard
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     return(
@@ -36,8 +36,6 @@ function App (){
                 {
                     !isLoggedIn ? (<UserAuth onLogin={setIsLoggedIn} />) : (<DashBoard className="flex-1 " />)
                 }
-                
-                
                 <p className="text-xs text-medium block mt-2">&copy; 2024 FlxTime - All rights reserved</p>
             </div>
         </div>
@@ -55,7 +53,6 @@ function NavBar(){
     ///handle menu open and close || switching of menu button icon
     // i'm only using icon value to conditionally display menu tray on small screens because of speed 
     const handleOpenMenu = () => setIcon(oldValue => oldValue === 'menu' ? 'x' : 'menu');
-    
 
     return(
         <nav className="px-0 py-5 sticky top-0 left-auto z-50 w-full bg-[#003338]">
@@ -80,18 +77,16 @@ function NavBar(){
     )
 }
 
-//User authentication block
+//User authentication block 
+/// authenticate user and push them to their dashboard
 function UserAuth({onLogin}) {
     return(
         <section>
             <div className="auth-bg p-6 flex flex-col gap-2 items-center justify-center h-[60vh] rounded-[0.5rem] bg-[#181818] mb-2">
                 <h1 className="text-4xl font-bold text-high text-center">Hi there, Flexer</h1>
                 <h6 className="text-lg text-medium text-center mb-4">Login to access the console.</h6>
-                <CustomBtn title='login' className="bg-accent border-2 border-accent text-[#1D1D1D] py-2 px-6" onClick={onLogin} />
+                <CustomBtn title='login' className="bg-accent border-2 border-accent text-[#1D1D1D] py-2 px-6" onClick={()=>onLogin(true)} />
             </div>
-            <table>
-
-            </table>
         </section>
     )
 }
@@ -100,6 +95,7 @@ function UserAuth({onLogin}) {
 function DashBoard({className=''}) {
     
     ///opens prompt for user to claim their tokens
+    /// isClaim should be true if user clicks on the claim button
     const [isClaiming, setIsClaiming] = useState(false);
 
     return(
@@ -112,6 +108,8 @@ function DashBoard({className=''}) {
                 {/* <Skeleton className='order-4 col-span-4 row-span-1 row-start-3  w-full' /> */}
             </div>
             
+            {/* claim prompt component */}
+            {/** the component take a prop 'balance', the amount to be claimed */}
             {isClaiming && (
                 <div className="w-[100vw] h-[100vh] absolute top-0 left-0 z-[60] bg-[rgba(0,0,0,0.8)]">
                     <RewardClaimPrompt onCloseClaim={()=>setIsClaiming(false)} 
@@ -140,7 +138,7 @@ function NavLink({title, link}){
     )
 }
 
-//user balance
+//component that displays user balance and button for claiming
 function TokenBalance({balance = 0, className = '', onClaim}) {
     return(
         <div className={`${className} p-4 bg-surface rounded-[0.67rem]`}>
@@ -156,16 +154,17 @@ function TokenBalance({balance = 0, className = '', onClaim}) {
                 <CustomBtn  title='claim' icon="bx-right-arrow-alt" onClick={onClaim}
                     className="text-high border-2 border-high py-2 px-6 mb-2 mx-auto sm:mx-0" right
                 />
-                <div className="bg-accent border-2 border-accent font-bold text-[#1D1D1D] py-2 px-6 w-full rounded-[0.5rem] flex items-center justify-center gap-2">
-                    <i className='bx bx-hourglass text-xl'></i>
-                    <small className="text-sm">Next claim in {'45h 59m'}</small>
-                </div>
+
+                {/* this should display how long a user has till next claim */}
+                <NextClaimCycle />
+                
             </div>
         </div>
     )
 }
 
 /// account stats
+/// component containing table of user claim history
 function FlexerStats({className=''}) {
     return(
         <div className={`${className} bg-[#3A3A3A] rounded-[0.67rem] flex flex-col max-h-full justify-between overflow-hidden `}>
@@ -179,8 +178,11 @@ function FlexerStats({className=''}) {
                     <Refresh />
                 </div>
                 <div className="w-full flex-1 overflow-auto">
+                    {/* this is a table of user claim history*/}
                     <table className="border-none w-full border-separate border-spacing-y-3 table-auto ">
                         <tbody>
+                            {/* map through the claim history, addOn can be secondary information  */}
+                            {/* the flexerStat components are just dummy placeholders */}
                             <FlexerStat />
                             <FlexerStat addOn='test add on' />
                             <FlexerStat />
@@ -226,6 +228,9 @@ function MoreStats({className=''}) {
 
 //=============================== COMPONENTS ==================================
 // FLEXER SINGLE STAT STAT 
+// this is component for each row of user claim history table 
+// it takes title, value, and any secondary information as addOn
+
 function FlexerStat({title='test title', value ='test value', addOn}) {
     return(
         <tr className="h-fit capitalize font-medium text-high text-sm bg-surface">
@@ -270,6 +275,7 @@ function CustomBtn({title, icon='', className ='', onClick, right= false}){
 }
 
 //refresh notification
+/// take time 'refreshTime' till the next data refresh
 function Refresh({refreshTime='52s'}) {
     return(
         <p className="text-sm text-medium w-fit">
@@ -287,22 +293,24 @@ function Separator({className =''}) {
 }
 
 //===== REWARD CLAIM PROMPTS
+// balance is the amount to be claimed
 function RewardClaimPrompt({className='', balance = 0, onCloseClaim}) {
-    const [isComplete, setComplete] = useState(true)
+    const [isComplete, setComplete] = useState(false)
 
     // closes the claim prompt
     const closePrompt = () => onCloseClaim();
 
     return(
-        <>
+        <div>
             {
-                !isComplete ? (<ProcessRewardClaim className={className} closePrompt={closePrompt} />) : ( <ClaimSuccessful className={className} closePrompt={closePrompt} />)
+                !isComplete ? (<ProcessRewardClaim className={className} balance={balance} closePrompt={closePrompt} />) : ( <ClaimSuccessful className={className} closePrompt={closePrompt} />)
             }
-        </>
+        </div>
     )
 }
 
 //===== REWARD CLAIM PROMPTS
+
 function ProcessRewardClaim({className='', balance = 0, closePrompt}) {
     return(
         <div className={`${className} p-4 rounded-[0.67rem] bg-[#2F2F2F]`}>
@@ -314,8 +322,10 @@ function ProcessRewardClaim({className='', balance = 0, closePrompt}) {
             <h3 className="font-bold text-lg text-center text-high">{balance} $FLXT</h3>
             <p className="text-medium text-center text-sm block mt-2 mb-4">Available Rewards</p>
             <CustomBtn className="bg-accent text-[#1D1D1D] py-2 px-6 w-full" title='Proceed with claim ' icon="bx-right-arrow-alt" right />
+            
             {/* process is loading */}
-            <ClaimProcessing className="mt-4"/>
+            {/* should be displayed only when waiting for claim process */}
+            {/* <ClaimProcessing className="mt-4"/> */}
         </div>
     )
 }
@@ -333,6 +343,8 @@ function ClaimProcessing({className=''}) {
 } 
 
 /// SUCCESSFUL CLAIM
+// component should be displayed only after claim was successful
+// this take the total amount user has claimed
 function ClaimSuccessful({className='', amount = 0, closePrompt}) {
     return(
         <div className={`${className} p-4 rounded-[0.67rem] bg-[#2F2F2F]`}>
@@ -348,7 +360,21 @@ function ClaimSuccessful({className='', amount = 0, closePrompt}) {
     )
 }
 
+
+/// NEXT CLAIM CYCLE
+/// THIS DISPLAYS HOW LONG IS REMAINING TILL THE NEXT CLAIM
+function NextClaimCycle({time = '45h 59m', className=''}) {
+    return(
+        <div className={`bg-accent border-2 border-accent font-bold text-[#1D1D1D] py-2 px-6 w-full rounded-[0.5rem] flex items-center justify-center gap-2 ${className}`}>
+            <i className='bx bx-hourglass text-xl'></i>
+            {/* replace the '45h 59m' with actual time */}
+            <small className="text-sm">Next claim in {time}</small> 
+        </div>
+    )
+}
+
 // skeleton for loading component
+// should be displayed for each component while dashboard information is loading
 function Skeleton (className='') {
     return(
         <div className={`p-2 bg-surface min-h-full rounded-[0.68rem] ${className}`}>

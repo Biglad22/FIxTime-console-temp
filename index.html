@@ -21,18 +21,18 @@
 
     <div id="app"></div>
 
-    <!-- Babel for JSX support -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src='https://unpkg.com/react@18/umd/react.production.min.js'></script>
+    <script src='https://unpkg.com/react-dom@18/umd/react-dom.production.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-router-dom@6/umd/react-router-dom.min.js"></script>
+    <script src='https://unpkg.com/babel-standalone@6.26.0/babel.js'></script>
 
-    <!-- React -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    
-    <!-- ReactDOM -->
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <!-- // main app jsx -->
     <script src="app.jsx" type="text/babel"></script>
 
     <!-- tailwind config file -->
     <script>
+
+
         tailwind.config = {
             theme: {
                 extend: {
