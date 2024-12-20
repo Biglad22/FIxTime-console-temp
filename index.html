@@ -1,12 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="shortcut icon" href="./assets/favicon.png" type="image/x-icon">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="style.css" />
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <meta name="description" content="FlexTime is a decentralized platform for token mining and community engagement. Join Flexers and earn rewards with our multi-modal mining solutions.">
     <meta name="keywords" content="FlexTime, crypto mining, decentralized platform, rewards, community, $FLXT">
@@ -16,59 +13,9 @@
     <meta property="og:image" content="/assets/img/Logo.png">
     <!-- <meta property="og:url" content="https://www.fixtime.com"> -->
     <title>FlxTime console - Join now and mine $FLXT with the community</title>
-</head>
-<body  class="font-sans">
-
-    <div id="app"></div>
-
-    <script src='https://unpkg.com/react@18/umd/react.production.min.js'></script>
-    <script src='https://unpkg.com/react-dom@18/umd/react-dom.production.min.js'></script>
-    <script src="https://cdn.jsdelivr.net/npm/react-router-dom@6/umd/react-router-dom.min.js"></script>
-    <script src='https://unpkg.com/babel-standalone@6.26.0/babel.js'></script>
-
-    <!-- // main app jsx -->
-    <script src="app.jsx" type="text/babel"></script>
-
-    <!-- tailwind config file -->
-    <script>
-
-
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Space Grotesk"', 'sans-serif'],
-                    },
-                    colors:{
-                        'high': 'rgb(255,255,255)',
-                        'medium': 'rgba(255,255,255,0.6)',
-                        'low': 'rgba(255,255,255, 0.3)',
-                        'surface' : '#2A2A2A',
-                        'accent' : '#29EEFF'
-
-                    },
-                    width:{
-                        'prompt-width' : 'calc(100% - 2.66rem)'
-                    }
-                    
-                },
-            },
-        };
-    </script>
-    <script type="application/ld+json">
-        {
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          "name": "FlexTime",
-          <!-- "url": "https://www.fixtime.com", -->
-          "logo": "https://www.fixtime.com/assets/img/Logo.png",
-          "sameAs": [
-            "https://twitter.com/fLxtime1",
-            "https://discord.com/invite/KYJyxH42xk"
-          ]
-        }
-    </script>
-        
-    
-</body>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
