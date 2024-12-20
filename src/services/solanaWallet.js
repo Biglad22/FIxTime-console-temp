@@ -4,7 +4,7 @@
 
 export const connectWallet = async () => {
     try {
-        if('solana' in window){
+        if('solana' in window && window.solana.isPhantom){
 
             const solana = window.solana;
             const res = await solana.connect();
