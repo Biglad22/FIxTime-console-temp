@@ -29,18 +29,17 @@ const WalletConnector = ({className = ''}) => {
     const handleClick = async (address) => { //HANDLES SELECTION AND CONNECTION TO USERS' DESIRED WALLET
         
         try {
-            select(address) 
-
+            
             const selectedWallet = wallets.find(wallet => wallet.adapter.name === address);
-
+            
             if (!selectedWallet) {
                 throw new Error('Selected wallet not found.');
             }
-
+            
             if (selectedWallet.adapter.readyState !== 'Installed') {
                 throw new Error(`Please install ${selectedWallet.adapter.name} to continue.`);
             }
-
+            select(address);
             await connectNewWallet();
 
         } catch (error) {
