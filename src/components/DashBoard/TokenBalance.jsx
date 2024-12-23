@@ -3,7 +3,7 @@ import { CustomBtn } from "../Buttons/FilledBtn";
 import NextClaimCycle from "./NextClaimNotice";
 import {userContext} from "../../store/UserContext";
 
-//component that displays user balance and button for claiming
+//component that displays user balance and button for claiming AND NEXT CLAIM PERIOD
 function TokenBalance({className = '', onClaim}) {
     
     const {paddedBalance} = useContext(userContext);

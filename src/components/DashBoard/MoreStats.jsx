@@ -1,6 +1,6 @@
 import { CustomBtn } from "../Buttons/FilledBtn"
 
-/// coming soon stats section
+/// coming soon stats section ON DASHBOARD
 function MoreStats({className=''}) {
     return(
         <section className={`p-6 flex flex-col gap-2 justify-center items-start bg-surface angular-gradient rounded-[0.67rem] ${className}`}>

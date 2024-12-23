@@ -1,5 +1,7 @@
 
-export function formatAndElapsedTime(dateInput) {
+//========================= HELPER FUNCTIONS USED IN APP
+
+export function formatAndElapsedTime(dateInput) { //FOR FORMATTING DATES TO REASONABLE FORMAT 
     // Parse the input date
     const date = new Date(dateInput);
   
@@ -47,7 +49,7 @@ export function formatAndElapsedTime(dateInput) {
 }
 
 
-export const throttle =(func, delay)=>{
+export const throttle =(func, delay)=>{ //throttle FUNCTION TO HELP BUTTONS
   let inThrottle;
 
   return function (...arg) {

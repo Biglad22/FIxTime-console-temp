@@ -4,14 +4,15 @@ import {userContext} from "../../store/UserContext";
 import { useCallback, useContext, useState } from "react";
 import spinnerSrc from "../../assets/img/spinner.png"
 
-
+// DISPLAYS CLAIM PROMPT FOR USER INTERACTION. NB: IT IS A POPUP PROMPT
 // balance is the amount to be claimed
 export function RewardClaimPrompt({className='', balance = 0, onCloseClaim}) {
     const [isComplete, setComplete] = useState(false)
 
-    // closes the claim prompt
+    // FUNCTION FOR CLOSING PROMPT   
     const closePrompt = () => onCloseClaim();
 
+    //SINCE PROMPT FOR SUCCESSFUL CLAIM AND PROCESSING CLAIM ARE DIFFERENT, CONDITIONAL RENDERING IS NECESSARY 
     return(
         <div>
             {
@@ -23,6 +24,8 @@ export function RewardClaimPrompt({className='', balance = 0, onCloseClaim}) {
 
 
 //===== REWARD CLAIM PROMPTS
+// THIS IS THE FIRST PROMPT TO BEGIN CLAIM PROCESS
+// TAKES FUNCTION FOR CLOSING PROMPT 
 export function ProcessRewardClaim({className='', closePrompt}) {
 
     const {total_reward} = useContext(userContext);
@@ -50,7 +53,8 @@ export function ProcessRewardClaim({className='', closePrompt}) {
     )
 }
 
-//CLAIM PROCESSING PROMPT
+//CLAIM PROCESSING PROMPT 
+//THIS IS RENDERED WHEN WAITING FOR USER SIGNATURE ON THE WALLET PROMPT
 export function ClaimProcessing({className=''}) {
     return(
         <div className={`${className} px-2 w-full`}> 

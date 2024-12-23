@@ -1,100 +1,163 @@
-import {useState, createContext, useRef, useMemo } from "react";
+import { useState, createContext, useRef, useMemo, useEffect, useCallback } from "react";
 import { getUserDetails } from "../services/api";
-import { connectWallet, checkConnection, disconnectWallet } from "../services/solanaWallet";
 import { handleBalancePadding } from "../utils/Helpers";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 /////====================================== USER CONTEXT ==============================================
 
-// create context
+// Create context
 export const userContext = createContext();
 
-// context provider 
-export const UseProvider = ({children}) =>{
+// Context provider
+export const UseProvider = ({ children }) => {
+    // Store user information
+    const [user, setUser] = useState(null); // Stores user information from database
+    const [refreshTime, setRefreshTime] = useState(60); // Tracks next refresh time
+    const refreshInterval = useRef(null); // Stores next refresh timer
+    const { connect, connected, publicKey } = useWallet(); // Access Solana wallet adapter
+    const [isOnline, setIsOnline] = useState(navigator.onLine);
+    const [masterErr, setMasterErr] = useState(
+        navigator.onLine ? null : "Please check internet connection"
+    ); // Master error to store operation-related errors
+    const [showWallets, setShowWallets] = useState(false); // Display or hide supported wallets list
+    const wallet = useMemo(() => publicKey?.toString() || null, [publicKey]); // Stores user wallet address
 
-    //store user information
-    const [wallet, setWallet] = useState(null);
-    const [user, setUser] = useState(null);
-    const [refreshTime, setRefreshTime] = useState(60);
-    const refreshInterval = useRef(null);
+    // Updates showWallets state
+    const linkWallet = state => {
+        if(state === showWallets) return; 
+        setShowWallets(state)
+    };
 
-    /// formats wallet address 
+    // Formats and hides wallet address
     const hiddenAddress = useMemo(() => {
-        if (!wallet || typeof wallet !== 'string') return null;
+        if (!wallet || typeof wallet !== "string") return null;
         return `${wallet.slice(0, 4)}...${wallet.slice(-4)}`;
     }, [wallet]);
 
-    const paddedBalance = useMemo(()=>{
-
-        if(user) return handleBalancePadding(user.total_reward);
+    // Pad total available tokens with K (thousand), M (million), B (billion)
+    const paddedBalance = useMemo(() => {
+        if (user) return handleBalancePadding(user.total_reward);
         else return handleBalancePadding(0);
+    }, [user]);
 
-    }, [user])
+    // ========================== Effects
+    // Monitor online/offline status
+    useEffect(() => {
+        const handleOnline = () => {
+            const online = navigator.onLine;
+            setIsOnline(online);
+            setMasterErr(online ? null : "Please check internet connection");
+        };
 
+        window.addEventListener("online", handleOnline);
+        window.addEventListener("offline", handleOnline);
 
-    /// ============================= ACTIONS
-    /// ============= DATA FETCH TIMER 
-    const refreshTimer = () =>{
-        if(refreshInterval.current) clearInterval(refreshInterval.current);
+        // Initial check
+        handleOnline();
 
-        refreshInterval.current = setInterval(()=>{
-            setRefreshTime(prevTime => {
+        // Cleanup event listeners on component unmount
+        return () => {
+            window.removeEventListener("online", handleOnline);
+            window.removeEventListener("offline", handleOnline);
+        };
+    }, []);
+
+    // Data fetch timer to keep track of time left till the next refresh
+    const refreshTimer = () => {
+        if (refreshInterval.current) clearInterval(refreshInterval.current); // Clear existing timer if running
+
+        refreshInterval.current = setInterval(() => {
+            setRefreshTime((prevTime) => {
                 if (prevTime <= 1) {
                     clearInterval(refreshInterval.current);
                     return 60;
-
                 } else return prevTime - 1; // Decrement the value
             });
-
         }, 1000);
-    }
+    };
 
-    /// =============== wallet connection 
-    const connectNewWallet = async () =>{
+    // Wallet connection
+    const connectNewWallet = async () => {
         try {
-            const userWallet = await connectWallet();
-            setWallet(userWallet); //stores user wallet address
+            if (!isOnline) throw new Error("Please check internet connection");
 
-            await fetchUser("4bkJKvLFh3FN5KV1pPZvwwRz3FZAppcUBKRo5Y9tnU8E"); //fetch user data
+            await connect();
 
-        } catch (error){throw new Error(error)}
-    }
+            // FIXME: Remove this hardcoded address later
+            await fetchUser("4bkJKvLFh3FN5KV1pPZvwwRz3FZAppcUBKRo5Y9tnU8E"); // Fetch user data
+            setMasterErr(null); // Reset master error
+            
+        } catch (error) {
+            setMasterErr(error.message);
+        }
+    };
 
-
-    //=========== fetch user information
-    const fetchUser = async (params) => { /// stores time remaining till next accepted refresh time
+    // Fetch user information
+    const fetchUser = async (params) => {
         try {
+            if (!isOnline) throw new Error("Please check internet connection");
+            if (!wallet && !params)
+                throw new Error("Connect your Solana wallet");
 
-            if(!wallet && !params) throw new Error('connect your solana wallet');
-
-            let res;
-            if(params) res = await getUserDetails(params);
-            else await getUserDetails(wallet);
-
+            const address = params || wallet;
+            const res = await getUserDetails(address);
             setUser(res.data.data);
             refreshTimer();
+            setMasterErr(null);
+        } catch (error) {
+            setMasterErr(error.message);
+        }
+    };
 
-        } catch (error) {throw new Error(error)}
-
-    }
-
-    //================== HANDLE WALLET RECONNECTION 
-    const reconnectWallet = async () => { //handle reconnection of existing wallet
+    // Handle wallet reconnection
+    const reconnectWallet = async () => {
         try {
-            const userWallet = await checkConnection(); ///gets and reconnects userWallet
-            setWallet(userWallet);
+            if (!isOnline) throw new Error("Please check internet connection");
+            if (!connected)
+                throw new Error("Reconnection failed, please connect wallet again");
+            if (!publicKey)
+                throw new Error("Public key is not available. Please connect your wallet.");
 
-            await fetchUser("4bkJKvLFh3FN5KV1pPZvwwRz3FZAppcUBKRo5Y9tnU8E"); //fetch user data
+            // FIXME: Remove this hardcoded address later
+            await fetchUser("4bkJKvLFh3FN5KV1pPZvwwRz3FZAppcUBKRo5Y9tnU8E"); // Fetch user data
+            setMasterErr(null); // Reset master error
+        } catch (error) {
+            setMasterErr(error.message);
+        }
+    };
 
-        } catch (error) {throw new Error(error)}
-    }
+    // Memoize context value to avoid unnecessary re-renders
+    const contextValue = useMemo(
+        () => ({
+            ...user,
+            refreshTime,
+            wallet,
+            isOnline,
+            hiddenAddress,
+            paddedBalance,
+            masterErr,
+            showWallets,
+            setMasterErr,
+            fetchUser,
+            connectNewWallet,
+            reconnectWallet,
+            linkWallet,
+        }),
+        [
+            user,
+            refreshTime,
+            wallet,
+            isOnline,
+            hiddenAddress,
+            paddedBalance,
+            masterErr,
+            showWallets
+        ]
+    );
 
-
-
-
-    
-    return(
-        <userContext.Provider value={{...user, refreshTime, wallet, hiddenAddress, paddedBalance, fetchUser, connectNewWallet, reconnectWallet}}>
+    return (
+        <userContext.Provider value={contextValue}>
             {children}
         </userContext.Provider>
-    )
-}
+    );
+};

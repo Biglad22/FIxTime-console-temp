@@ -1,4 +1,4 @@
-import React, {useMemo, useContext} from "react"
+import React, {useContext} from "react"
 import Refresh from "./DataRefresh"
 import {formatAndElapsedTime} from '../../utils/Helpers'
 import  {userContext}  from "../../store/UserContext";
@@ -7,12 +7,13 @@ import Separator from '../Separators/Separator'
 
 
 /// account stats
-/// component containing table of user claim history
+/// component containing table of user DETAILS
 function FlexerStats({className=''}) {
 
+    //ALL STATS DISPLAYED ON TABLE
     const {status, hiddenAddress, proof_count, last_proof_time, locked_rewards} = useContext(userContext);
     
-    
+    // FORMATS DATE TO MORE REASONABLE FORMAT FOR USERS
     const { formattedDate, elapsedTimeString } = formatAndElapsedTime(last_proof_time);
 
     return(
@@ -35,6 +36,7 @@ function FlexerStats({className=''}) {
                             <FlexerStat title="status" value={status} />
                             <FlexerStat title="proof count" value={proof_count} />
                             <FlexerStat title="latest count" value={elapsedTimeString} addOn={formattedDate} />
+                            <FlexerStat title="locked rewards" value={locked_rewards} /> 
                             <FlexerStat title="wallet" value={hiddenAddress} />
                         </tbody>
                     </table>

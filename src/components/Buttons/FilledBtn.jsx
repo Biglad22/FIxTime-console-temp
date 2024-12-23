@@ -17,7 +17,9 @@ export function FilledBtn({title, icon='', className ='', href, right= false}){
 
 
 
-///CUSTOMIZABLE BUTTON
+// CUSTOMIZABLE BUTTON
+// CUSTOMBTN TAKE EITHER HREF OR ONCLICK, THIS HELPS IT DETERMINE THE TYPE OF HTML ELEMENT TO RENDER
+// ONCLICK MEANS IT IS AN ACTUAL BUTTON, WHILE HREF MEANS IT IS AN ANCHOR TAG
 export function CustomBtn({title, icon='', className ='', onClick, href, right= false, process = false }){
 
     if(onClick){
@@ -30,6 +32,7 @@ export function CustomBtn({title, icon='', className ='', onClick, href, right= 
                     {title}
                 </span>}
                 {
+                    //PROCESS = TRUE, DISPLAYS A SPINNER
                     process && <img src={spinner} alt="sign request" loading="lazy"
                     className="w-[1rem] h-auto animate-spin mx-1"/>
                 }

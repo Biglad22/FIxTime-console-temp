@@ -1,6 +1,9 @@
 import axios from "axios";
 
 
+///API FUNCTIONS FOR INTERACTION WITH BACKEND
+
+//AXIOS INSTANCE
 const customApi = axios.create({
     baseURL : 'https://mine.flxtime.click/miner',
     headers: {
@@ -10,7 +13,7 @@ const customApi = axios.create({
 
 
 
-//get user information 
+//GETS USER INFORMATION FROM THE BACKEND 
 export const getUserDetails = async (wallet) =>{
     try {
 

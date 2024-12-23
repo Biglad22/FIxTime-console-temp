@@ -5,10 +5,11 @@ import FlexBanner from "../components/DashBoard/FlexBanner";
 import MoreStats from "../components/DashBoard/MoreStats";
 import TokenBalance from "../components/DashBoard/TokenBalance";
 import { RewardClaimPrompt } from "../components/DashBoard/RewardClaim";
-import { ClaimSuccessful } from "../components/DashBoard/RewardClaim";
 import Skeleton from "../components/LoadingSkeleton/Skeleton";
 import { userContext } from "../store/UserContext";
 import { useNavigate } from "react-router-dom";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useConnection } from "@solana/wallet-adapter-react";
 
 
 //MAIN DASHBOARD
@@ -19,28 +20,30 @@ function DashBoard({className=''}) {
     const [isClaiming, setIsClaiming] = useState(false);
     const [pageLoading, setPageLoading] = useState(false);
     const navigate = useNavigate()
-
     ///access userContext
-    const {reconnectWallet} = useContext(userContext);
+    const {reconnectWallet, isOnline, setMasterErr} = useContext(userContext);
+    const {wallet} = useWallet()
+
 
 
     useEffect(()=>{
-
+        
         const getData = async () =>{
             try {
+                if(!isOnline) throw new Error("please check internet connection");
                 setPageLoading(true);
                 await reconnectWallet();
             } 
             catch (error) {
-                console.log(error.message)
-                navigate('/')
+                setMasterErr(error.message)
+                navigate('/');
             }
             finally{setPageLoading(false)}
         }
 
-        getData()
+        getData();
 
-    },[navigate])
+    },[isOnline])
 
     return(
         <div className={`${className} p-0 sm:p-4 rounded-[0.67rem] bg-transparent sm:bg-[#181818] overflow-hidden`}>

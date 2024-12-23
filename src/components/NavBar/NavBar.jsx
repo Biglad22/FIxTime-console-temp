@@ -2,20 +2,45 @@ import NavLink from "./NavLink";
 import { useState, useContext } from "react";
 import { userContext } from "../../store/UserContext";
 import { nav_links_data } from "../../assets/data";
-import { FilledBtn, CustomBtn } from "../Buttons/FilledBtn";
-import { useWalletConnector } from "../../hooks/useWalletConnector";
+import { CustomBtn } from "../Buttons/FilledBtn";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useNavigate } from "react-router-dom";
+import { throttle } from "../../utils/Helpers";
 
 /// NAVBAR 
 // this is the top bar navigation section
 function NavBar(){
 
-    const {hiddenAddress, connectNewWallet} = useContext(userContext);
+    const {wallet, disconnect} = useWallet(); // ACCESS WALLET FUNCTIONS 
+    const navigate = useNavigate();
+    const {hiddenAddress, linkWallet, isOnline, setMasterErr} = useContext(userContext);
     const[icon, setIcon] = useState('menu'); // stores BOXICON assign name for icons used in menu button
 
     ///handle menu open and close || switching of menu button icon
     // i'm only using icon value to conditionally display menu tray on small screens because of speed 
     const handleOpenMenu = () => setIcon(oldValue => oldValue === 'menu' ? 'x' : 'menu');
-    const {processing, connectWallet} = useWalletConnector();
+
+    const disconnectWallet = throttle(async () =>{
+        try {
+            if (!isOnline) throw new Error("disconnection failed, please check internet connection");
+            setMasterErr(null);
+            await wallet.adapter.disconnect();
+            await disconnect();
+            
+            
+        } catch (error){
+            console.log(error);
+            setMasterErr(error.message);
+        }
+        handleOpenMenu()
+        navigate('/');
+    },5000)
+
+    const handleConnection = throttle(()=>{
+        handleOpenMenu()
+        linkWallet(true);
+    }, 5000);
+
 
     return(
         <nav className="px-0 py-5 sticky top-0 left-auto z-50 w-full bg-[#003338]">
@@ -34,9 +59,8 @@ function NavBar(){
                     {nav_links_data.map(link => (<NavLink link={link.link} title={link.title} key={link.title}  />))}
                     {
                         hiddenAddress ? 
-                        (<FilledBtn title={hiddenAddress} icon="bxs-wallet-alt" className="max-w-[10rem]" />)
-                        :(<CustomBtn title='login' process={processing}  className={` border-2 ${!processing ? 'bg-accent border-accent text-[#1D1D1D]' : 'bg-surface border-surface text-accent' } py-2 px-6 mx-auto`} onClick={connectWallet} />) 
-                    }
+                        (<CustomBtn title={hiddenAddress} icon="bxs-wallet-alt" className={` border-2 bg-accent border-accent text-[#1D1D1D] w-[10rem]  py-2 px-6 mx-auto`} onClick={disconnectWallet} />)
+                        :(<CustomBtn title={wallet ? 'login' : 'connect wallet'}  className={` border-2 bg-accent border-accent text-[#1D1D1D] py-2 px-6 mx-auto`} onClick={handleConnection} />) }
                 </div>
             </div>
         </nav>
