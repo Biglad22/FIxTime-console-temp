@@ -8,7 +8,7 @@ import { RewardClaimPrompt } from "../features/claimToken/RewardClaim";
 import Skeleton from "../components/LoadingSkeleton/Skeleton";
 import { userContext } from "../store/UserContext";
 import { useNavigate } from "react-router-dom";
-import { StakePrompt } from "../features/stakeToken";
+import { StakePrompt } from "../features/stakeToken/Index";
 import { UnstakePrompt } from "../features/unstake/Index";
 import { useWallet } from "@solana/wallet-adapter-react";
 
