@@ -26,6 +26,12 @@ const AuthPage = () => {
                     <CustomBtn title={wallet ? 'login' : 'connect wallet'}  className={` border-2 bg-accent border-accent text-[#1D1D1D]  py-2 px-6 mx-auto`} 
                         onClick={handleWalletConnector} 
                     />
+                    {/* <small>
+                        {wallet?.adapter?.wallet?.accounts} 
+                    </small>
+                    <small>
+                        {wallet} 
+                    </small> */}
                     {masterErr && (<small className='capitalize w-full text-center p-2 text-medium absolute top-full'>{masterErr}</small>) }
                     
                 </div>
