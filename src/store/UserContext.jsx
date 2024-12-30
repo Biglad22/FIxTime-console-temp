@@ -2,9 +2,9 @@ import { useState, createContext, useRef, useMemo, useEffect } from "react";
 import { getUserDetails } from "../services/api";
 import { handleBalancePadding } from "../utils/Helpers";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { transact } from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
 
 /////====================================== USER CONTEXT ==============================================
-
 // Create context
 export const userContext = createContext();
 
@@ -25,13 +25,20 @@ export const UseProvider = ({ children }) => {
     const [isClaiming, setIsClaiming] = useState(false); //isClaiming conditionally renders token claim prompt
     const [isStaking, setIsStaking] = useState(false); //isStaking conditionally renders token staking prompt
     const [isUnstaking, setIsUnstaking] = useState(false); //isUnstaking conditionally renders token unStaking prompt
-
+    const [isMobile, setIsMobile] = useState(false);
 
     // Updates showWallets state
     const linkWallet = state => {
         if(state === showWallets) return; 
         setShowWallets(state)
     };
+
+    //CHECK IF APP IS BEING ACCESSED WITH MOBILE DEVICE
+    useEffect(()=>{
+        const mobileTest = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        setIsMobile(mobileTest);
+    },[])
+
 
     // Formats and hides wallet address
     const hiddenAddress = useMemo(() => {
@@ -87,9 +94,19 @@ export const UseProvider = ({ children }) => {
         try {
             if (!isOnline) throw new Error("Please check internet connection");
 
-            await connect();
-            const userWallet = publicKey.toString();
-            // FIXME: Remove this hardcoded address later
+            let userWallet; //wallet address is stored here
+
+            if(isMobile){
+                await transact(async wallet =>{
+                    userWallet = wallet.publicKey.toString();
+                    alert(userWallet)
+                });
+
+            }else{
+                await connect();
+                userWallet = publicKey.toString();
+            }
+
             await fetchUser(userWallet); // Fetch user data
             setMasterErr(null); // Reset master error
             
@@ -140,6 +157,7 @@ export const UseProvider = ({ children }) => {
             paddedBalance,
             masterErr,
             showWallets,
+            isMobile,
             isClaiming, setIsClaiming,
             isStaking, setIsStaking,
             isUnstaking, setIsUnstaking,
@@ -158,7 +176,7 @@ export const UseProvider = ({ children }) => {
             paddedBalance,
             masterErr,
             showWallets,
-            isClaiming, isUnstaking, isStaking
+            isClaiming, isUnstaking, isStaking, isMobile
         ]
     );
 

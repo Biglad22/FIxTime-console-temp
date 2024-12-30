@@ -19,7 +19,7 @@ const Selector = ({ className = '', title, iconSrc, onClick }) => (
 // Main Wallet Connector
 const WalletConnector = ({ className = '' }) => {
     const { wallets, select, publicKey, connected } = useWallet();
-    const { setMasterErr, linkWallet, connectNewWallet } = useContext(userContext);
+    const { setMasterErr, linkWallet, connectNewWallet, isMobile } = useContext(userContext);
 
     const handleClick = async (address) => {
         try {
@@ -29,7 +29,7 @@ const WalletConnector = ({ className = '' }) => {
                 throw new Error('Selected wallet not found.');
             }
 
-            if (selectedWallet.adapter.readyState !== 'Installed') {
+            if (!isMobile && selectedWallet.adapter.readyState !== 'Installed') {
                 throw new Error(`Please install ${selectedWallet.adapter.name} to continue.`);
             }
 

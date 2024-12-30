@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { StakePrompt } from "../features/stakeToken/Index";
 import { UnstakePrompt } from "../features/unstake/Index";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { transact } from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
 
 
 //MAIN DASHBOARD
@@ -21,7 +22,7 @@ function DashBoard({className=''}) {
     const {connected, publicKey, connect} = useWallet();
     const { //access userContext
         reconnectWallet, isOnline, setMasterErr, isClaiming, setIsClaiming, 
-        isStaking, setIsStaking, isUnstaking, setIsUnstaking
+        isStaking, setIsStaking, isUnstaking, setIsUnstaking, isMobile
     } = useContext(userContext);
 
 
@@ -42,10 +43,23 @@ function DashBoard({className=''}) {
 
     // Check if connect on initial render
     useEffect(()=>{
-        if(!connected) connect().catch(err => {
-            setMasterErr(err.message);
-            navigate('/');
-        })
+        const initializeWallet = async () => {
+            try {
+                if (!connected) {
+                    if (isMobile) {
+                        await transact(async (wallet) => {
+                            console.log("Wallet session started:", wallet);
+                        });
+                    } else {
+                        await connect();
+                    }
+                }
+            } catch (error) {
+                setMasterErr(error.message);
+                navigate("/");
+            }
+        };
+        initializeWallet();
     },[])
 
 
