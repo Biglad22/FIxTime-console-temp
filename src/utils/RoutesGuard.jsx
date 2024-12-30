@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useWallet } from '@solana/wallet-adapter-react';
 import { userContext } from '../store/UserContext';

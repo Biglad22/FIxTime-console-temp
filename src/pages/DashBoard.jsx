@@ -37,7 +37,7 @@ function DashBoard({className=''}) {
         }
         finally{setPageLoading(false)}
         
-    },[isOnline])
+    },[isOnline, navigate])
 
 
     // Check if connect on initial render
