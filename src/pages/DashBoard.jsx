@@ -42,7 +42,10 @@ function DashBoard({className=''}) {
 
     // Check if connect on initial render
     useEffect(()=>{
-        if(!connected) connect();
+        if(!connected) connect().catch(err => {
+            setMasterErr(err.message);
+            navigate('/');
+        })
     },[])
 
 

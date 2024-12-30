@@ -2,7 +2,7 @@ import NavBar from "./components/NavBar/NavBar";
 import DashBoard from "./pages/DashBoard";
 import AuthPage from "./pages/AuthPage";
 import { RoutesGuard } from "./utils/RoutesGuard";
-import { BrowserRouter as Router, Route, Routes  } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate  } from "react-router-dom";
 
 ///============== MAIN HOME PAGE COMPONENT
 function App(){
@@ -18,6 +18,7 @@ function App(){
                     <Routes>
                         <Route path="/" element={<AuthPage />} />
                         <Route path="/dashboard" element={<RoutesGuard><DashBoard className="flex-1 " /></RoutesGuard>} />
+                        <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
 
                     <p className="text-xs text-medium block mt-2">&copy; 2024 FlxTime - All rights reserved</p>
