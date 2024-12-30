@@ -1,5 +1,5 @@
 import { CustomBtn } from '../components/Buttons/FilledBtn';
-import { useCallback, useContext} from 'react';
+import { useContext} from 'react';
 import { userContext } from '../store/UserContext';
 import WalletConnector from '../components/auth/wallectConnector'
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -13,10 +13,10 @@ const AuthPage = () => {
     const {masterErr, linkWallet, showWallets} = useContext(userContext);
     const navigate = useNavigate();
 
-    const handleWalletConnector = useCallback(()=>{
+    const handleWalletConnector = ()=>{
         if(wallet && wallet.adapter.wallet.accounts.length > 0) navigate('/dashboard');
         else linkWallet(true)
-    },[linkWallet, showWallets, navigate])
+    }
     return(
         <section>
             <div className="auth-bg p-6 flex flex-col gap-2 items-center justify-center h-[60vh] rounded-[0.5rem] bg-[#181818] mb-2">

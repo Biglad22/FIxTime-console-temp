@@ -1,5 +1,5 @@
 
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import FlexerStats from "../components/DashBoard/FlexerStatsTable";
 import FlexBanner from "../components/DashBoard/FlexBanner";
 import MoreStats from "../components/DashBoard/MoreStats";
@@ -26,7 +26,7 @@ function DashBoard({className=''}) {
 
 
     //======== MAIN FUNCTION FOR GETTING USER DATA
-    const getData = useCallback(async (wallet)=>{ 
+    const getData = async (wallet)=>{ 
         try {
             if(!isOnline) throw new Error("please check internet connection");
             await reconnectWallet(wallet);
@@ -37,7 +37,7 @@ function DashBoard({className=''}) {
         }
         finally{setPageLoading(false)}
         
-    },[isOnline, navigate])
+    }
 
 
     // Check if connect on initial render
