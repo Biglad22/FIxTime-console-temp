@@ -92,28 +92,39 @@ export const UseProvider = ({ children }) => {
     // Wallet connection
     const connectNewWallet = async () => {
         try {
-            if (!isOnline) throw new Error("Please check internet connection");
-
-            let userWallet; //wallet address is stored here
-
-            if(isMobile){
-                await transact(async wallet =>{
+            if (!isOnline) throw new Error("Please check your internet connection");
+    
+            let userWallet; // Wallet address is stored here
+    
+            if (isMobile) {
+                console.log("Attempting to connect using mobile wallet...");
+                await transact(async (wallet) => {
+                    if (!wallet || !wallet.publicKey) {
+                        throw new Error("Failed to retrieve wallet public key.");
+                    }
                     userWallet = wallet.publicKey.toString();
-                    alert(userWallet)
+                    alert(`Connected wallet address: ${userWallet}`);
                 });
-
-            }else{
+            } else {
+                console.log("Attempting to connect using desktop wallet...");
                 await connect();
+                if (!publicKey) {
+                    throw new Error("Failed to retrieve public key from desktop wallet.");
+                }
                 userWallet = publicKey.toString();
             }
-
-            await fetchUser(userWallet); // Fetch user data
+    
+            // Fetch user data
+            console.log("Fetching user data...");
+            await fetchUser(userWallet);
+    
             setMasterErr(null); // Reset master error
-            
         } catch (error) {
+            console.error("Error during wallet connection:", error);
             setMasterErr(error.message);
         }
     };
+    
 
     // Fetch user information
     const fetchUser = async (params) => {
