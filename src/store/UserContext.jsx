@@ -1,8 +1,7 @@
-import { useState, createContext, useRef, useMemo, useEffect, useCallback } from "react";
+import { useState, createContext, useRef, useMemo, useEffect } from "react";
 import { getUserDetails } from "../services/api";
 import { handleBalancePadding } from "../utils/Helpers";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Await } from "react-router-dom";
 
 /////====================================== USER CONTEXT ==============================================
 
