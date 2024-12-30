@@ -1,76 +1,104 @@
 
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import FlexerStats from "../components/DashBoard/FlexerStatsTable";
 import FlexBanner from "../components/DashBoard/FlexBanner";
 import MoreStats from "../components/DashBoard/MoreStats";
 import TokenBalance from "../components/DashBoard/TokenBalance";
-import { RewardClaimPrompt } from "../components/DashBoard/RewardClaim";
+import { RewardClaimPrompt } from "../features/claimToken/RewardClaim";
 import Skeleton from "../components/LoadingSkeleton/Skeleton";
 import { userContext } from "../store/UserContext";
 import { useNavigate } from "react-router-dom";
+import { StakePrompt } from "../features/stakeToken";
+import { UnstakePrompt } from "../features/unstake/Index";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useConnection } from "@solana/wallet-adapter-react";
 
 
 //MAIN DASHBOARD
 function DashBoard({className=''}) {
     
-    ///opens prompt for user to claim their tokens
-    /// isClaim should be true if user clicks on the claim button
-    const [isClaiming, setIsClaiming] = useState(false);
-    const [pageLoading, setPageLoading] = useState(false);
-    const navigate = useNavigate()
-    ///access userContext
-    const {reconnectWallet, isOnline, setMasterErr} = useContext(userContext);
-    const {wallet} = useWallet()
+    const [pageLoading, setPageLoading] = useState(true);
+    const navigate = useNavigate();
+    const {connected, publicKey, connect} = useWallet();
+    const { //access userContext
+        reconnectWallet, isOnline, setMasterErr, isClaiming, setIsClaiming, 
+        isStaking, setIsStaking, isUnstaking, setIsUnstaking
+    } = useContext(userContext);
 
 
-
-    useEffect(()=>{
-        
-        const getData = async () =>{
-            try {
-                if(!isOnline) throw new Error("please check internet connection");
-                setPageLoading(true);
-                await reconnectWallet();
-            } 
-            catch (error) {
-                setMasterErr(error.message)
-                navigate('/');
-            }
-            finally{setPageLoading(false)}
+    //======== MAIN FUNCTION FOR GETTING USER DATA
+    const getData = useCallback(async (wallet)=>{ 
+        try {
+            if(!isOnline) throw new Error("please check internet connection");
+            await reconnectWallet(wallet);
+        } 
+        catch (error) {
+            setMasterErr(error.message)
+            navigate('/');
         }
-
-        getData();
-
+        finally{setPageLoading(false)}
+        
     },[isOnline])
 
+
+    // Check if connect on initial render
+    useEffect(()=>{
+        if(!connected) connect();
+    },[])
+
+
+    // RECONNECT WALLET AS SOON AS PUBLIC KEY IS AVAILABLE
+    useEffect(()=>{
+        if(connected || publicKey) {
+            const userWallet = publicKey.toString();
+            getData(userWallet);
+        }
+    },[isOnline, connected, publicKey])
+
+
+    //======== MAIN COMPONENT
     return(
-        <div className={`${className} p-0 sm:p-4 rounded-[0.67rem] bg-transparent sm:bg-[#181818] overflow-hidden`}>
-            <div className={`grid grid-cols-4 grid-row-3 grid-flow-dense  gap-4 content-stretch justify-items-stretch max-h-full ${isClaiming ? 'overflow-hidden' : 'overflow-y-auto'}`}>
+        <div className={className + ' overflow-hidden'}>
+            <div className={`max-h-full ${isClaiming ? 'overflow-hidden' : 'overflow-y-auto'}`}>
+                <div className={`grid grid-cols-4 grid-row-3 grid-flow-dense  gap-4 content-stretch justify-items-stretch mb-4 p-0 sm:p-4 rounded-[0.67rem] bg-transparent sm:bg-[#181818]`}>
+                    {   
+                        pageLoading ? 
+                        (<>
+                            <Skeleton className="row-start-1 order-1 col-span-4 sm:col-span-2 lg:col-span-1  row-span-1 lg:row-span-2 h-[55vh]" />
+                            <Skeleton className="order-2 sm:max-lg:order-3 col-span-4 md:col-span-2 row-span-2 h-[55vh]"/>
+                            <Skeleton className="order-3 row-start-4 sm:row-start-1 md:max-lg:row-start-2 col-start-1 sm:max-md:col-start-3 lg:col-start-4 sm:max-lg:order-2 col-span-4 sm:col-span-2 lg:col-span-1 row-span-1 lg:row-span-2 h-[55vh]" />
+                        </>) :
+                        (<>
+                            <TokenBalance className="row-start-1 order-1 col-span-4 sm:col-span-2 lg:col-span-1  row-span-1 lg:row-span-2 " onClaim={()=>setIsClaiming(true)} />
+                            <FlexerStats className="order-2 sm:max-lg:order-3 col-span-4 md:col-span-2 row-span-2"/>
+                            <FlexBanner className="order-3 row-start-4 sm:row-start-1 md:max-lg:row-start-2 col-start-1 sm:max-md:col-start-3 lg:col-start-4 sm:max-lg:order-2 col-span-4 sm:col-span-2 lg:col-span-1 row-span-1 lg:row-span-2" />
+                        </>)
+                    }
+                </div>
                 {   
                     pageLoading ? 
                     (<>
-                        <Skeleton className="row-start-1 order-1 col-span-4 sm:col-span-2 lg:col-span-1  row-span-1 lg:row-span-2 h-[55vh]" />
-                        <Skeleton className="order-2 sm:max-lg:order-3 col-span-4 md:col-span-2 row-span-2 h-[55vh]"/>
-                        <Skeleton className="order-3 row-start-4 sm:row-start-1 md:max-lg:row-start-2 col-start-1 sm:max-md:col-start-3 lg:col-start-4 sm:max-lg:order-2 col-span-4 sm:col-span-2 lg:col-span-1 row-span-1 lg:row-span-2 h-[55vh]" />
-                        <Skeleton className=" order-4 col-span-4 row-span-1 hidden md:flex w-full h-[35vh]"/>
+                        <Skeleton className="h-[55vh]" />
                     </>) :
                     (<>
-                        <TokenBalance className="row-start-1 order-1 col-span-4 sm:col-span-2 lg:col-span-1  row-span-1 lg:row-span-2 " onClaim={()=>setIsClaiming(true)} />
-                        <FlexerStats className="order-2 sm:max-lg:order-3 col-span-4 md:col-span-2 row-span-2"/>
-                        <FlexBanner className="order-3 row-start-4 sm:row-start-1 md:max-lg:row-start-2 col-start-1 sm:max-md:col-start-3 lg:col-start-4 sm:max-lg:order-2 col-span-4 sm:col-span-2 lg:col-span-1 row-span-1 lg:row-span-2" />
-                        <MoreStats className=" order-4 col-span-4 row-span-1 hidden md:flex"/>
+                        <MoreStats className="rounded-[0.67rem] bg-transparent sm:bg-[#181818]"/>                        
                     </>)
                 }
+
             </div>
             
             {/* claim prompt component */}
             {/** the component take a prop 'balance', the amount to be claimed */}
-            {isClaiming && (
+            {(isClaiming || isStaking || isUnstaking) && (
                 <div className="w-[100vw] h-[100vh] absolute top-0 left-0 z-[60] bg-[rgba(0,0,0,0.8)]">
-                    <RewardClaimPrompt onCloseClaim={()=>setIsClaiming(false)} 
-                    className="absolute z-50 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-prompt-width sm:w-[50%] md:w-[30%]" />
+                    {isClaiming && <RewardClaimPrompt onCloseClaim={()=>setIsClaiming(false)} 
+                        className="absolute z-50 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-prompt-width sm:w-[50%] lg:w-[30%]" />
+                    }
+                    {isStaking && <StakePrompt close={()=>setIsStaking(false)} 
+                        className="absolute z-50 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-prompt-width sm:w-[50%] lg:w-[30%]" />
+                    }
+                    {isUnstaking && <UnstakePrompt close={()=>setIsUnstaking(false)} 
+                        className="absolute z-50 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-prompt-width sm:w-[50%] lg:w-[30%]" />
+                    }
                 </div>
             )}
         </div>

@@ -9,7 +9,7 @@ function TokenBalance({className = '', onClaim}) {
     const {paddedBalance} = useContext(userContext);
     
     return(
-        <div className={`${className} p-4 bg-surface rounded-[0.67rem]`}>
+        <div className={`${className} p-4 bg-surface rounded-radius`}>
             <div className='w-[70%] md:w-full h-fit relative p-2 mb-4 mx-auto'>
                 <div className='w-full  bg-[#303030] absolute rounded-[1.11rem] partial-height z-[1] top-[1rem] left-0'></div>
                 <img src="/img/token-balance.png" alt="" 

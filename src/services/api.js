@@ -16,16 +16,8 @@ const customApi = axios.create({
 //GETS USER INFORMATION FROM THE BACKEND 
 export const getUserDetails = async (wallet) =>{
     try {
-
-        const res =  await customApi.get(`/${wallet}`); 
-        console.log(res);
-        
-        return res
-
+        return  await customApi.get(`/${wallet}`); 
     } catch (err) {
-
-        console.log(err.message);
-        throw new Error(err);
-        
+        throw new Error(err.response.data.message);
     }
 }

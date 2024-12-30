@@ -20,12 +20,12 @@ export function FilledBtn({title, icon='', className ='', href, right= false}){
 // CUSTOMIZABLE BUTTON
 // CUSTOMBTN TAKE EITHER HREF OR ONCLICK, THIS HELPS IT DETERMINE THE TYPE OF HTML ELEMENT TO RENDER
 // ONCLICK MEANS IT IS AN ACTUAL BUTTON, WHILE HREF MEANS IT IS AN ANCHOR TAG
-export function CustomBtn({title, icon='', className ='', onClick, href, right= false, process = false }){
+export function CustomBtn({title, icon='', className ='', onClick, href, right= false, process = false, disabled=false }){
 
     if(onClick){
         return(
-            <button type="button" onClick={onClick}
-                className={`capitalize font-bold text-[#190D13] text-sm flex ${right ? 'flex-row-reverse' : ''} gap-1 items-center justify-center p-0 rounded-[0.5rem] w-fit ${className}`}
+            <button type="button" onClick={onClick}  disabled={disabled}
+                className={`capitalize font-bold text-[#190D13] text-sm flex ${right ? 'flex-row-reverse' : ''} gap-1 items-center justify-center p-0 rounded-[0.5rem] w-fit transition-all duration-500 ${className}`}
             >
                 {icon && <i className={`bx ${icon} font-bold text-[1.2rem]`}></i>}
                 {title && <span>
@@ -42,7 +42,7 @@ export function CustomBtn({title, icon='', className ='', onClick, href, right= 
     else if (href){
         return(
             <a href={href} target='_blank'
-                className={`capitalize font-bold text-[#190D13] text-sm flex ${right ? 'flex-row-reverse' : ''} gap-1 items-center justify-center p-0 rounded-[0.5rem] w-fit ${className}`}
+                className={`capitalize font-bold text-[#190D13] text-sm flex ${right ? 'flex-row-reverse' : ''} gap-1 items-center justify-center p-0 rounded-[0.5rem]  transition-all duration-500 w-fit ${className}`}
             >
                 {icon && <i className={`bx ${icon} font-bold text-[1.2rem]`}></i>}
                 {title && <span>

@@ -2,6 +2,7 @@ import { useState, createContext, useRef, useMemo, useEffect, useCallback } from
 import { getUserDetails } from "../services/api";
 import { handleBalancePadding } from "../utils/Helpers";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { Await } from "react-router-dom";
 
 /////====================================== USER CONTEXT ==============================================
 
@@ -14,13 +15,18 @@ export const UseProvider = ({ children }) => {
     const [user, setUser] = useState(null); // Stores user information from database
     const [refreshTime, setRefreshTime] = useState(60); // Tracks next refresh time
     const refreshInterval = useRef(null); // Stores next refresh timer
-    const { connect, connected, publicKey } = useWallet(); // Access Solana wallet adapter
+    const { connect, publicKey } = useWallet(); // Access Solana wallet adapter
     const [isOnline, setIsOnline] = useState(navigator.onLine);
-    const [masterErr, setMasterErr] = useState(
-        navigator.onLine ? null : "Please check internet connection"
-    ); // Master error to store operation-related errors
+    const [masterErr, setMasterErr] = useState( navigator.onLine ? null : "Please check internet connection"); // Master error to store operation-related errors
     const [showWallets, setShowWallets] = useState(false); // Display or hide supported wallets list
-    const wallet = useMemo(() => publicKey?.toString() || null, [publicKey]); // Stores user wallet address
+    const userWallet = useMemo(() => publicKey?.toString() || null, [publicKey]); // Stores user wallet address
+
+    // ========================== CLAIMS, STAKING AND UNSTAKING PROMPT DISPLAY HANDLERS
+    ///opens prompt for user to claim their tokens
+    const [isClaiming, setIsClaiming] = useState(false); //isClaiming conditionally renders token claim prompt
+    const [isStaking, setIsStaking] = useState(false); //isStaking conditionally renders token staking prompt
+    const [isUnstaking, setIsUnstaking] = useState(false); //isUnstaking conditionally renders token unStaking prompt
+
 
     // Updates showWallets state
     const linkWallet = state => {
@@ -30,9 +36,9 @@ export const UseProvider = ({ children }) => {
 
     // Formats and hides wallet address
     const hiddenAddress = useMemo(() => {
-        if (!wallet || typeof wallet !== "string") return null;
-        return `${wallet.slice(0, 4)}...${wallet.slice(-4)}`;
-    }, [wallet]);
+        if (!userWallet || typeof userWallet !== "string") return null;
+        return `${userWallet.slice(0, 4)}...${userWallet.slice(-4)}`;
+    }, [userWallet]);
 
     // Pad total available tokens with K (thousand), M (million), B (billion)
     const paddedBalance = useMemo(() => {
@@ -60,6 +66,7 @@ export const UseProvider = ({ children }) => {
             window.removeEventListener("online", handleOnline);
             window.removeEventListener("offline", handleOnline);
         };
+
     }, []);
 
     // Data fetch timer to keep track of time left till the next refresh
@@ -82,9 +89,9 @@ export const UseProvider = ({ children }) => {
             if (!isOnline) throw new Error("Please check internet connection");
 
             await connect();
-
+            const userWallet = publicKey.toString();
             // FIXME: Remove this hardcoded address later
-            await fetchUser("4bkJKvLFh3FN5KV1pPZvwwRz3FZAppcUBKRo5Y9tnU8E"); // Fetch user data
+            await fetchUser(userWallet); // Fetch user data
             setMasterErr(null); // Reset master error
             
         } catch (error) {
@@ -96,47 +103,47 @@ export const UseProvider = ({ children }) => {
     const fetchUser = async (params) => {
         try {
             if (!isOnline) throw new Error("Please check internet connection");
-            if (!wallet && !params)
-                throw new Error("Connect your Solana wallet");
-
-            const address = params || wallet;
-            const res = await getUserDetails(address);
+            if (!params) throw new Error("Connect your Solana wallet");
+            
+            const res = await getUserDetails(params);
             setUser(res.data.data);
-            refreshTimer();
-            setMasterErr(null);
-        } catch (error) {
-            setMasterErr(error.message);
-        }
+
+            refreshTimer(); //restart refresh timer
+            setMasterErr(null); //clear error message
+
+        } catch (error) {throw new Error(error.message)}
     };
 
     // Handle wallet reconnection
-    const reconnectWallet = async () => {
+    const reconnectWallet = async (paramWallet) => {
         try {
-            if (!isOnline) throw new Error("Please check internet connection");
-            if (!connected)
-                throw new Error("Reconnection failed, please connect wallet again");
-            if (!publicKey)
-                throw new Error("Public key is not available. Please connect your wallet.");
 
-            // FIXME: Remove this hardcoded address later
-            await fetchUser("4bkJKvLFh3FN5KV1pPZvwwRz3FZAppcUBKRo5Y9tnU8E"); // Fetch user data
+            if (!isOnline) throw new Error("Please check internet connection");
+            await fetchUser(paramWallet); // Fetch user data
             setMasterErr(null); // Reset master error
+
         } catch (error) {
             setMasterErr(error.message);
+            // throw new Error(error.message);
         }
     };
+
+
 
     // Memoize context value to avoid unnecessary re-renders
     const contextValue = useMemo(
         () => ({
             ...user,
             refreshTime,
-            wallet,
+            userWallet,
             isOnline,
             hiddenAddress,
             paddedBalance,
             masterErr,
             showWallets,
+            isClaiming, setIsClaiming,
+            isStaking, setIsStaking,
+            isUnstaking, setIsUnstaking,
             setMasterErr,
             fetchUser,
             connectNewWallet,
@@ -146,12 +153,13 @@ export const UseProvider = ({ children }) => {
         [
             user,
             refreshTime,
-            wallet,
+            userWallet,
             isOnline,
             hiddenAddress,
             paddedBalance,
             masterErr,
-            showWallets
+            showWallets,
+            isClaiming, isUnstaking, isStaking
         ]
     );
 

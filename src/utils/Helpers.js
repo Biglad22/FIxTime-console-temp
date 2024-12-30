@@ -69,17 +69,17 @@ export const handleBalancePadding = (number) =>{
   if ((value / 1e9) >= 1){
 
     let temp =  value / 1e9
-    return `${temp.toFixed(5)}B`
+    return `${temp.toFixed(3)}B`
   }
   else if ((value / 1e6) >= 1){
 
     let temp =  value / 1e6
-    return `${temp.toFixed(5)}M`
+    return `${temp.toFixed(3)}M`
   }
   else if ((value / 1e3) >= 100){
 
     let temp =  value / 1e3
-    return `${temp.toFixed(5)}K`
+    return `${temp.toFixed(3)}K`
   }
 
   return value
