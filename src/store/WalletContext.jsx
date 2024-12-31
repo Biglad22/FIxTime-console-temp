@@ -1,13 +1,10 @@
 //CONTEXT PROVIDER FOR SOLANA WALLET FUNCTIONS AND STATES 
 import { WalletProvider, ConnectionProvider} from '@solana/wallet-adapter-react';
 import { clusterApiUrl } from '@solana/web3.js';
-import { SolanaMobileWalletAdapter } from '@solana-mobile/wallet-adapter-mobile';
 
 export const WalletContext = ({children}) =>{
 
-    const wallets = [
-        new SolanaMobileWalletAdapter()
-    ];
+    const wallets = [];
 
     const endPoint = clusterApiUrl("devnet");
 
