@@ -9,13 +9,27 @@ import { useNavigate } from 'react-router-dom';
 //User authentication block 
 /// authenticate user and push them to their dashboard
 const AuthPage = () => {
-    const {wallet, publicKey} = useWallet();
-    const {masterErr, linkWallet, showWallets} = useContext(userContext);
+    const {wallets, select, publicKey, connected} = useWallet();
+    const {masterErr, linkWallet, showWallets, isMobile, setMasterErr, connectNewWallet} = useContext(userContext);
     const navigate = useNavigate();
 
-    const handleWalletConnector = ()=>{
+    const handleWalletConnector = async()=>{
         if(publicKey) navigate('/dashboard');
-        else linkWallet(true);
+        else{
+            if(isMobile){
+                try {
+
+                    // Select the wallet
+                    select(wallets[0]);
+        
+                    // Wait for the connection to establish
+                    if (!connected) await connectNewWallet();
+                } catch (error) {
+                    setMasterErr(error.message);
+                }
+            }else linkWallet(true);
+        } 
+            
     }
     return(
         <section>
