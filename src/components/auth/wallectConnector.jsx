@@ -20,6 +20,8 @@ const Selector = ({ className = '', title, iconSrc, onClick }) => (
 const WalletConnector = ({ className = '' }) => {
     const { wallets, select, publicKey, connected } = useWallet();
     const { setMasterErr, linkWallet, connectNewWallet, isMobile } = useContext(userContext);
+    console.log(wallets);
+    
 
     const handleClick = async (address) => {
         try {
