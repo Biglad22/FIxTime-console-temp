@@ -9,12 +9,12 @@ import { useNavigate } from 'react-router-dom';
 //User authentication block 
 /// authenticate user and push them to their dashboard
 const AuthPage = () => {
-    const {wallet} = useWallet();
+    const {wallet, publicKey} = useWallet();
     const {masterErr, linkWallet, showWallets} = useContext(userContext);
     const navigate = useNavigate();
 
     const handleWalletConnector = ()=>{
-        if(wallet && wallet.adapter.wallet.accounts.length > 0) navigate('/dashboard');
+        if(wallet && wallet.adapter.wallet.accounts.length > 0 || publicKey) navigate('/dashboard');
         else linkWallet(true)
     }
     return(
@@ -23,7 +23,7 @@ const AuthPage = () => {
                 <h1 className="text-4xl font-bold text-high text-center">Hi there, Flexer</h1>
                 <h6 className="text-lg text-medium text-center mb-4">Login to access the console</h6>
                 <div className='relative w-full' >
-                    <CustomBtn title={wallet ? 'login' : 'connect wallet'}  className={` border-2 bg-accent border-accent text-[#1D1D1D]  py-2 px-6 mx-auto`} 
+                    <CustomBtn title={publicKey ? 'login' : 'connect wallet'}  className={` border-2 bg-accent border-accent text-[#1D1D1D]  py-2 px-6 mx-auto`} 
                         onClick={handleWalletConnector} 
                     />
                     {/* <small>

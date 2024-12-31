@@ -53,6 +53,7 @@ function DashBoard({className=''}) {
                     } else {
                         await connect();
                     }
+                    await connect();
                 }
             } catch (error) {
                 setMasterErr(error.message);
