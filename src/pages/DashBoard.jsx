@@ -46,13 +46,13 @@ function DashBoard({className=''}) {
         const initializeWallet = async () => {
             try {
                 if (!connected) {
-                    if (isMobile) {
-                        await transact(async (wallet) => {
-                            console.log("Wallet session started:", wallet);
-                        });
-                    } else {
-                        await connect();
-                    }
+                    // if (isMobile) {
+                    //     await transact(async (wallet) => {
+                    //         console.log("Wallet session started:", wallet);
+                    //     });
+                    // } else {
+                    //     await connect();
+                    // }
                     await connect();
                 }
             } catch (error) {

@@ -2,7 +2,7 @@ import { useState, createContext, useRef, useMemo, useEffect } from "react";
 import { getUserDetails } from "../services/api";
 import { handleBalancePadding } from "../utils/Helpers";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { transact } from '@solana-mobile/wallet-adapter';
+
 
 /////====================================== USER CONTEXT ==============================================
 // Create context
@@ -96,22 +96,9 @@ export const UseProvider = ({ children }) => {
 
             let userWallet; //wallet address is stored here
 
-            if(isMobile){
-               
-                await transact(async wallet =>{
-                    const authResult = wallet.authorize({
-                      cluster: "devnet",
-                      identity: { name: "Solana Counter Incrementor" },
-                    }); // Authorizes the wallet
-                   
-                    const authToken = authResult.auth_token; // save this for the wallet.reauthorize() function
-                    const publicKey = authResult.selectedAccount.publicKey;
-                  });
+            await connect();
+            userWallet = publicKey.toString();
 
-            }else{
-                await connect();
-                userWallet = publicKey.toString();
-            }
 
             await fetchUser(userWallet); // Fetch user data
             setMasterErr(null); // Reset master error
