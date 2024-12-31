@@ -14,7 +14,7 @@ export const UseProvider = ({ children }) => {
     const [user, setUser] = useState(null); // Stores user information from database
     const [refreshTime, setRefreshTime] = useState(60); // Tracks next refresh time
     const refreshInterval = useRef(null); // Stores next refresh timer
-    const { connect, connected, publicKey } = useWallet(); // Access Solana wallet adapter
+    const { connect, publicKey } = useWallet(); // Access Solana wallet adapter
     const [isOnline, setIsOnline] = useState(navigator.onLine);
     const [masterErr, setMasterErr] = useState( navigator.onLine ? null : "Please check internet connection"); // Master error to store operation-related errors
     const [showWallets, setShowWallets] = useState(false); // Display or hide supported wallets list
@@ -97,12 +97,7 @@ export const UseProvider = ({ children }) => {
             let userWallet; //wallet address is stored here
 
             await connect();
-
-            // If no wallet was connected, handle the cancellation
-            if (!connected) {
-                throw new Error("Wallet connection was canceled or failed.");
-            }
-
+            
             userWallet = publicKey.toString();
 
 
@@ -110,9 +105,8 @@ export const UseProvider = ({ children }) => {
             setMasterErr(null); // Reset master error
             
         } catch (error) {
-            console.log(console.error);
-            
             setMasterErr(error.message);
+            throw Error(error.message);
         }
     };
 
