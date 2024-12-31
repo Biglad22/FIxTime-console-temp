@@ -98,11 +98,15 @@ export const UseProvider = ({ children }) => {
     
             if (isMobile) {
                 console.log("Attempting to connect using mobile wallet...");
-                await transact(async (signer) => {
-                    const authKey = await signer.authorize();
-                    userWallet = authKey.toString();
-                    alert(`Connected wallet address: ${userWallet}`);
-                });
+                await transact(async (wallet) => {
+                    const authResult = wallet.authorize({
+                      cluster: "devnet",
+                      identity: { name: "Solana Counter Incrementor" },
+                    }); // Authorizes the wallet
+                   
+                    const authToken = authResult.auth_token; // save this for the wallet.reauthorize() function
+                    userWallet = authResult.selectedAccount.publicKey;
+                  });
             } else {
                 console.log("Attempting to connect using desktop wallet...");
                 await connect();
