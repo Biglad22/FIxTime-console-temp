@@ -14,7 +14,7 @@ const AuthPage = () => {
     const navigate = useNavigate();
 
     const handleWalletConnector = ()=>{
-        if(wallet && wallet.adapter.wallet.accounts.length > 0 || publicKey) navigate('/dashboard');
+        if((wallet && wallet.adapter.wallet.accounts.length > 0) || publicKey) navigate('/dashboard');
         else linkWallet(true)
     }
     return(
