@@ -2,7 +2,7 @@ import { useState, createContext, useRef, useMemo, useEffect } from "react";
 import { getUserDetails } from "../services/api";
 import { handleBalancePadding } from "../utils/Helpers";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { transact } from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
+import { transact } from '@solana-mobile/wallet-adapter';
 
 /////====================================== USER CONTEXT ==============================================
 // Create context
@@ -92,41 +92,34 @@ export const UseProvider = ({ children }) => {
     // Wallet connection
     const connectNewWallet = async () => {
         try {
-            if (!isOnline) throw new Error("Please check your internet connection");
-    
-            let userWallet; // Wallet address is stored here
-    
-            if (isMobile) {
-                console.log("Attempting to connect using mobile wallet...");
-                await transact(async (wallet) => {
+            if (!isOnline) throw new Error("Please check internet connection");
+
+            let userWallet; //wallet address is stored here
+
+            if(isMobile){
+               
+                await transact(async wallet =>{
                     const authResult = wallet.authorize({
                       cluster: "devnet",
                       identity: { name: "Solana Counter Incrementor" },
                     }); // Authorizes the wallet
                    
                     const authToken = authResult.auth_token; // save this for the wallet.reauthorize() function
-                    userWallet = authResult.selectedAccount.publicKey;
+                    const publicKey = authResult.selectedAccount.publicKey;
                   });
-            } else {
-                console.log("Attempting to connect using desktop wallet...");
+
+            }else{
                 await connect();
-                if (!publicKey) {
-                    throw new Error("Failed to retrieve public key from desktop wallet.");
-                }
                 userWallet = publicKey.toString();
             }
-    
-            // Fetch user data
-            console.log("Fetching user data...");
-            await fetchUser(userWallet);
-    
+
+            await fetchUser(userWallet); // Fetch user data
             setMasterErr(null); // Reset master error
+            
         } catch (error) {
-            console.error("Error during wallet connection:", error);
             setMasterErr(error.message);
         }
     };
-    
 
     // Fetch user information
     const fetchUser = async (params) => {
