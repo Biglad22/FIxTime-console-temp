@@ -20,6 +20,8 @@ const AuthPage = () => {
                 try {
 
                     // Select the wallet
+                    console.log(wallets[0]);
+                    
                     select(wallets[0]);
         
                     // Wait for the connection to establish
