@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@solana-mobile/mobile-wallet-adapter-protocol": "^2.2.0-new-arch-beta",
     "@solana-mobile/mobile-wallet-adapter-protocol-web3js": "^2.1.4",
+    "@solana-mobile/wallet-adapter-mobile": "^2.1.4",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/wallet-adapter-react-ui": "^0.9.35",

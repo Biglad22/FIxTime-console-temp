@@ -95,24 +95,31 @@ export const UseProvider = ({ children }) => {
             if (!isOnline) throw new Error("Please check your internet connection");
     
             let userWallet; // Wallet address is stored here
-    
-            if (isMobile) {
-                console.log("Attempting to connect using mobile wallet...");
-                await transact(async (wallet) => {
-                    if (!wallet || !wallet.publicKey) {
-                        throw new Error("Failed to retrieve wallet public key.");
-                    }
-                    userWallet = wallet.publicKey.toString();
-                    alert(`Connected wallet address: ${userWallet}`);
-                });
-            } else {
-                console.log("Attempting to connect using desktop wallet...");
-                await connect();
-                if (!publicKey) {
-                    throw new Error("Failed to retrieve public key from desktop wallet.");
-                }
-                userWallet = publicKey.toString();
+            
+            console.log("Attempting to connect using desktop wallet...");
+            await connect();
+            if (!publicKey) {
+                throw new Error("Failed to retrieve public key from desktop wallet.");
             }
+            
+                userWallet = publicKey.toString();
+            // if (isMobile) {
+            //     console.log("Attempting to connect using mobile wallet...");
+            //     await transact(async (wallet) => {
+            //         if (!wallet || !wallet.publicKey) {
+            //             throw new Error("Failed to retrieve wallet public key.");
+            //         }
+            //         userWallet = wallet.publicKey.toString();
+            //         alert(`Connected wallet address: ${userWallet}`);
+            //     });
+            // } else {
+            //     console.log("Attempting to connect using desktop wallet...");
+            //     await connect();
+            //     if (!publicKey) {
+            //         throw new Error("Failed to retrieve public key from desktop wallet.");
+            //     }
+            //     userWallet = publicKey.toString();
+            // }
     
             // Fetch user data
             console.log("Fetching user data...");
