@@ -104,6 +104,8 @@ export const UseProvider = ({ children }) => {
             setMasterErr(null); // Reset master error
             
         } catch (error) {
+            console.log(console.error);
+            
             setMasterErr(error.message);
         }
     };
