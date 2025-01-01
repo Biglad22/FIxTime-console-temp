@@ -19,9 +19,12 @@ const AuthPage = () => {
         else{
 
             if(isMobile){
+                console.log(wallets[0]);
                 try {
 
                     try {
+                       
+                        
                         select(wallets[0]);
                     } catch (error) {
                         if (error.message === "User rejected the request") {
