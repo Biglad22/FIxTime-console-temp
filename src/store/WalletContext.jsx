@@ -10,7 +10,7 @@ export const WalletContext = ({children}) =>{
 
     return (
         <ConnectionProvider endpoint={endPoint}>
-            <WalletProvider  wallets={wallets} autoConnect >
+            <WalletProvider wallets={wallets} autoConnect >
                 {children}
             </WalletProvider>
         </ConnectionProvider>

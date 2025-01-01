@@ -5,6 +5,7 @@ import WalletConnector from '../components/auth/wallectConnector'
 import { useWallet } from '@solana/wallet-adapter-react';
 import React  from 'react';
 import { useNavigate } from 'react-router-dom';
+import { throttle } from '../utils/Helpers';
 
 //User authentication block 
 /// authenticate user and push them to their dashboard
@@ -13,16 +14,24 @@ const AuthPage = () => {
     const {masterErr, linkWallet, showWallets, isMobile, setMasterErr, connectNewWallet} = useContext(userContext);
     const navigate = useNavigate();
 
-    const handleWalletConnector = async()=>{
+    const handleWalletConnector = throttle(async()=>{
         if(publicKey) navigate('/dashboard');
         else{
-            console.log(wallets);
-            
+
             if(isMobile){
                 try {
 
-                    // Select the wallet
-                    select(wallets[0]);
+                    try {
+                        select(wallets[0]);
+                    } catch (error) {
+                        if (error.message === "User rejected the request") {
+                            console.error("User closed the wallet selection prompt without choosing.");
+                            // Handle cancellation
+                        } else {
+                            throw error; // Re-throw for other types of errors
+                        }
+                    }
+                    
         
                     // Wait for the connection to establish
                     if (!connected) await connectNewWallet();
@@ -35,7 +44,8 @@ const AuthPage = () => {
             }else linkWallet(true);
         } 
             
-    }
+    }, 50000)
+
     return(
         <section>
             <div className="auth-bg p-6 flex flex-col gap-2 items-center justify-center h-[60vh] rounded-[0.5rem] bg-[#181818] mb-2">
