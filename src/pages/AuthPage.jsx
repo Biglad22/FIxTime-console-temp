@@ -20,13 +20,14 @@ const AuthPage = () => {
                 try {
 
                     // Select the wallet
-                    console.log(wallets);
                     select(wallets[0]);
         
                     // Wait for the connection to establish
                     if (!connected) await connectNewWallet();
-                    
+
                 } catch (error) {
+
+                    wallets[0].disconnect();
                     setMasterErr(error.message);
                 }
             }else linkWallet(true);
