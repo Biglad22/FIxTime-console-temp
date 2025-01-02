@@ -26,6 +26,9 @@ const AuthPage = () => {
     
                     // Create a Promise to handle the focus event
                     const waitForAuthorization = new Promise((resolve, reject) => {
+
+                        wallets[0].adapter.on('error',()=>reject(new Error("Please select a wallet to continue")))
+
                         handleFocus = () => {
                             // Check authorization status
                             if ('_authorizationResult' in wallets[0].adapter && wallets[0].adapter._authorizationResult) {
@@ -48,8 +51,6 @@ const AuthPage = () => {
                 } catch (error) {
                     // Clean up and handle the error
                     window.onfocus = null;
-                    disconnect();
-                    select(null);
                     setMasterErr(error.message);
                     console.error(error);
                 }finally{
