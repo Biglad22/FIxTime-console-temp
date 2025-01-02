@@ -33,9 +33,7 @@ const AuthPage = () => {
 
 
                 } catch (error) {
-                    select(wallets[0]);
                     setMasterErr(error.message);
-                    
                     console.log(error);
                 }
             }else linkWallet(true);

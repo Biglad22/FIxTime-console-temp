@@ -95,7 +95,9 @@ export const UseProvider = ({ children }) => {
     const connectNewWallet = async () => {
         try {
             if (!isOnline) throw new Error("Please check internet connection");
+
             await connect();
+
             if(!connecting && !connected) throw new Error("something went wrong, refresh page and try again");
             // publicKey?.toString();
             // await fetchUser(userWallet); // Fetch user data
