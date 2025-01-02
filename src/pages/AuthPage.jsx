@@ -18,25 +18,37 @@ const AuthPage = () => {
         else{
             if(isMobile){
                 try {
-
                     console.log(wallets[0]);
                     select(wallets[0]);
                     console.log(wallets[0]);
-                    
+                
+                    let errorOccurred = false; // Flag to track errors
+                
+                    // Set up the onfocus listener
                     window.onfocus = () => {
-                        if ('_authorizationResult' in wallets[0].adapter && wallets[0].adapter._authorizationResult) return;
-                        throw new Error("please select a wallet to continue");
-                    }
-                    
+                        try {
+                            if ('_authorizationResult' in wallets[0].adapter && wallets[0].adapter._authorizationResult) return;
+                            throw new Error("Please select a wallet to continue");
+                        } catch (error) {
+                            errorOccurred = true; // Set the flag
+                            window.onfocus = null; // Clean up the listener
+                            throw error; // Propagate the error
+                        }
+                    };
+                
                     // Wait for the connection to establish
                     if (!connected) await connectNewWallet();
-
-
+                
+                    if (errorOccurred) {
+                        throw new Error("Process aborted due to wallet selection issue");
+                    }
+                
                 } catch (error) {
-                    window.onfocus = null
+                    window.onfocus = null; // Clean up the listener
                     setMasterErr(error.message);
                     console.log(error);
                 }
+                
             }else linkWallet(true);
         } 
             
