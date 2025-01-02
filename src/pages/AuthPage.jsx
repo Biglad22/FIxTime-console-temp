@@ -33,7 +33,7 @@ const AuthPage = () => {
 
 
                 } catch (error) {
-                    disconnect();
+                    window.onfocus = null
                     setMasterErr(error.message);
                     console.log(error);
                 }
