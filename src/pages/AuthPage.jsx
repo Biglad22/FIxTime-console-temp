@@ -13,12 +13,12 @@ const AuthPage = () => {
     const {masterErr, linkWallet, showWallets, isMobile, setMasterErr, connectNewWallet} = useContext(userContext);
     const navigate = useNavigate();
 
-    const isConnected = useMemo(()=> ((!isMobile && wallet && wallet.adapter.wallet.accounts.length > 0) 
-    || (isMobile && '_authorizationResult' in wallets[0].adapter && wallets[0].adapter._authorizationResult)
-    || (publicKey || connected)),[connecting, connected, publicKey, wallet, wallets]);
+    // const isConnected = useMemo(()=> ((!isMobile && wallet && wallet.adapter.wwallet.adapter.wallet.accounts.length > 0) 
+    // || (isMobile && '_authorizationResult' in wallets[0].adapter && wallets[0].adapter._authorizationResult)
+    // || (publicKey || connected)),[connecting, connected, publicKey, wallet, wallets]);
 
     const handleWalletConnector = async () => {
-        if (isConnected){
+        if (connected || publicKey) {
             navigate('/dashboard');
         }
         else{
@@ -75,7 +75,7 @@ const AuthPage = () => {
                 <h1 className="text-4xl font-bold text-high text-center">Hi there, Flexer</h1>
                 <h6 className="text-lg text-medium text-center mb-4">Login to access the console</h6>
                 <div className='relative w-full' >
-                    <CustomBtn title={isConnected ? 'login' : 'connect wallet'}  className={` border-2 bg-accent border-accent text-[#1D1D1D]  py-2 px-6 mx-auto`} 
+                    <CustomBtn title={(connected || publicKey)? 'login' : 'connect wallet'}  className={` border-2 bg-accent border-accent text-[#1D1D1D]  py-2 px-6 mx-auto`} 
                         onClick={handleWalletConnector} 
                     />
                     {/* <small>
