@@ -112,7 +112,7 @@ export const UseProvider = ({ children }) => {
             } else if (error.message.includes("No wallet")) {
                 msg = "No wallet found. Please install a compatible mobile wallet.";
             } else {
-                msg = "An unexpected error occurred. Please try again later.";
+                msg = "An unexpected error occurred. Please refresh page and try again later.";
             }
             setMasterErr(msg);
             throw Error(msg);

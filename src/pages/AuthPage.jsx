@@ -9,13 +9,19 @@ import { useNavigate } from 'react-router-dom';
 //User authentication block 
 /// authenticate user and push them to their dashboard
 const AuthPage = () => {
-    const {wallets, select, publicKey, connected, disconnect} = useWallet();
+    const {wallets, select, publicKey, connected, wallet} = useWallet();
     const {masterErr, linkWallet, showWallets, isMobile, setMasterErr, connectNewWallet} = useContext(userContext);
     const navigate = useNavigate();
 
     const handleWalletConnector = async () => {
         if (connected || publicKey) {
-            navigate('/dashboard');
+            if (!isMobile && wallet.adapter.wallet.accounts.length > 0) {
+                navigate('/dashboard');
+            }
+            if (isMobile && '_authorizationResult' in wallets[0].adapter && wallets[0].adapter._authorizationResult) {
+                navigate('/dashboard');
+            }
+            
         } else {
             if (isMobile) {
                 let handleFocus;
@@ -27,14 +33,12 @@ const AuthPage = () => {
                     // Create a Promise to handle the focus event
                     const waitForAuthorization = new Promise((resolve, reject) => {
 
-                        wallets[0].adapter.on('error',()=>reject(new Error("Please select a wallet to continue")))
-
                         handleFocus = () => {
                             // Check authorization status
                             if ('_authorizationResult' in wallets[0].adapter && wallets[0].adapter._authorizationResult) {
                                 resolve(); // Authorization successful
                             } else {
-                                reject(new Error("Please select a wallet to continue")); // Throw an error
+                                reject(new Error("error, please refresh page and select a wallet to continue")); // Throw an error
                             }
                         };
     
