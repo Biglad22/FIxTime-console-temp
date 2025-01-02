@@ -29,7 +29,7 @@ function Refresh() {
                 throw new Error("Please reconnect your wallet");
             }
 
-            if(isMobile && wallet._authorizationResult.accounts.length < 1){
+            if(isMobile && wallet.adapter._authorizationResult.accounts.length < 1){
                 await disconnect(); //SINCE CONNECTED AND WALLET MAY NOT HAVE BEEN CHANGED, DISCONNECTING IS FIRST REQUIRED
                 throw new Error("Please reconnect your wallet");
             }
