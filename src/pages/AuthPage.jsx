@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 //User authentication block 
 /// authenticate user and push them to their dashboard
 const AuthPage = () => {
-    const {wallets, select, publicKey, connected} = useWallet();
+    const {wallets, select, publicKey, connected, disconnect} = useWallet();
     const {masterErr, linkWallet, showWallets, isMobile, setMasterErr, connectNewWallet} = useContext(userContext);
     const navigate = useNavigate();
 
@@ -33,6 +33,7 @@ const AuthPage = () => {
 
 
                 } catch (error) {
+                    disconnect();
                     setMasterErr(error.message);
                     console.log(error);
                 }
