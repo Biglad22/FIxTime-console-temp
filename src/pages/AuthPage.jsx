@@ -16,8 +16,6 @@ const AuthPage = () => {
     const handleWalletConnector = async()=>{
         if(connected || publicKey) navigate('/dashboard');
         else{
-            console.log(wallets);
-            
             if(isMobile){
                 try {
 

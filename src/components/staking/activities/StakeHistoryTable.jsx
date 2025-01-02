@@ -1,11 +1,19 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { CustomBtn } from '../../Buttons/FilledBtn';
 import Divider from '../../dividers/Divider';
+import { userContext } from '../../../store/UserContext';
 
 
 /// TABLE USED IN ACTIVITIES COMPONENT
-const StakeHistoryTable = ({ amount, lockDuration, earnedReward, dueDate, className='' }) => {
+const StakeHistoryTable = ({ amount, lockDuration, earnedReward, dueDate,  className='' }) => {
+
+    const  {setIsUnstaking} = useContext(userContext);
+
+    const handleUnstaking=()=>{
+        setIsUnstaking(true);
+    }
+
     return (
         <table className={`w-full p-0 m-0 ${className} font-sans bg-[#1F1F1F] rounded-t-md`}>
             <thead className='w-full text-left bg-[#323232]'>
@@ -31,7 +39,7 @@ const StakeHistoryTable = ({ amount, lockDuration, earnedReward, dueDate, classN
                     <td colSpan="2" className='px-3 py-3'>
                         <Divider className='w-full mb-3' />
                         <CustomBtn title='Unstake' icon='bx-right-arrow-alt' className='flex items-center justify-center w-fit gap-1 px-0 text-high py-2 font-normal' right
-                            onClick={() => console.log('Unstake')}
+                            onClick={handleUnstaking}
                         />
                     </td>
                 </TableRow>
