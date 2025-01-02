@@ -5,7 +5,7 @@ import WalletConnector from '../components/auth/wallectConnector'
 import { useWallet } from '@solana/wallet-adapter-react';
 import React  from 'react';
 import { useNavigate } from 'react-router-dom';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import {WalletMultiButton} from "@solana/wallet-adapter-react-ui";
 
 //User authentication block 
 /// authenticate user and push them to their dashboard
@@ -46,10 +46,9 @@ const AuthPage = () => {
                 <h1 className="text-4xl font-bold text-high text-center">Hi there, Flexer</h1>
                 <h6 className="text-lg text-medium text-center mb-4">Login to access the console</h6>
                 <div className='relative w-full' >
-                    {/* <CustomBtn title={publicKey ? 'login' : 'connect wallet'}  className={` border-2 bg-accent border-accent text-[#1D1D1D]  py-2 px-6 mx-auto`} 
+                    <CustomBtn title={publicKey ? 'login' : 'connect wallet'}  className={` border-2 bg-accent border-accent text-[#1D1D1D]  py-2 px-6 mx-auto`} 
                         onClick={handleWalletConnector} 
-                    /> */}
-                    <WalletMultiButton />
+                    />
                     {/* <small>
                         {wallet?.adapter?.wallet?.accounts} 
                     </small>
