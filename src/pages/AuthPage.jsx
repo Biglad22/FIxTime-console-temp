@@ -18,6 +18,7 @@ const AuthPage = () => {
             navigate('/dashboard');
         } else {
             if (isMobile) {
+                let handleFocus;
                 try {
                     console.log(wallets[0]);
                     select(wallets[0]);
@@ -25,7 +26,7 @@ const AuthPage = () => {
     
                     // Create a Promise to handle the focus event
                     const waitForAuthorization = new Promise((resolve, reject) => {
-                        const handleFocus = () => {
+                        handleFocus = () => {
                             // Check authorization status
                             if ('_authorizationResult' in wallets[0].adapter && wallets[0].adapter._authorizationResult) {
                                 resolve(); // Authorization successful
@@ -37,12 +38,6 @@ const AuthPage = () => {
                         // Attach the focus event listener
                         window.addEventListener('focus', handleFocus);
     
-                        // Clean up the event listener on resolve or reject
-                        const cleanUp = () => {
-                            window.removeEventListener('focus', handleFocus);
-                        };
-                        resolve.finally(cleanUp);
-                        reject.finally(cleanUp);
                     });
     
                     // Wait for the wallet to connect or handle the focus error
@@ -55,6 +50,8 @@ const AuthPage = () => {
                     window.onfocus = null;
                     setMasterErr(error.message);
                     console.error(error);
+                }finally{
+                    window.removeEventListener('focus', handleFocus);
                 }
             } else {
                 linkWallet(true);
