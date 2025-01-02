@@ -2,6 +2,7 @@ import { useState, createContext, useRef, useMemo, useEffect } from "react";
 import { getUserDetails } from "../services/api";
 import { handleBalancePadding } from "../utils/Helpers";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { useConnection } from "@solana/wallet-adapter-react";
 
 
 /////====================================== USER CONTEXT ==============================================
@@ -19,6 +20,7 @@ export const UseProvider = ({ children }) => {
     const [masterErr, setMasterErr] = useState( navigator.onLine ? null : "Please check internet connection"); // Master error to store operation-related errors
     const [showWallets, setShowWallets] = useState(false); // Display or hide supported wallets list
     const userWallet = useMemo(() => publicKey?.toString() || null, [publicKey]); // Stores user wallet address
+
 
     // ========================== CLAIMS, STAKING AND UNSTAKING PROMPT DISPLAY HANDLERS
     ///opens prompt for user to claim their tokens

@@ -54,7 +54,7 @@ const WalletConnector = ({ className = '' }) => {
         <div className={`${className} p-4 rounded-[0.67rem] bg-[#2F2F2F] w-fit max-w-full`}>
             <CustomBtn icon="bx-x" className="text-4xl text-accent ml-auto" onClick={() => linkWallet(false)} />
             <div className="flex gap-2 flex-wrap items-center justify-center mt-2">
-                {wallets.map((wallet) => (
+                { wallets.map((wallet) => (
                     <Selector
                         title={wallet.adapter.name}
                         onClick={() => handleClick(wallet.adapter.name)}

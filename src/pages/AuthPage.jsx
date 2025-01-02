@@ -10,12 +10,14 @@ import {WalletMultiButton} from "@solana/wallet-adapter-react-ui";
 //User authentication block 
 /// authenticate user and push them to their dashboard
 const AuthPage = () => {
-    const {wallets, select, publicKey, connected} = useWallet();
+    const {wallets, select, publicKey, wallet, connected} = useWallet();
     const {masterErr, linkWallet, showWallets, isMobile, setMasterErr, connectNewWallet} = useContext(userContext);
     const navigate = useNavigate();
 
     const handleWalletConnector = async()=>{
-        if(connected || publicKey) navigate('/dashboard');
+        if((!isMobile && wallet.adapter.wallet.accounts.length < 1) || (isMobile && wallet.adapter._authorizationResult.accounts.length < 1)){
+            navigate('/dashboard');  
+        } 
         else{
             console.log(wallets);
             
@@ -46,7 +48,7 @@ const AuthPage = () => {
                 <h1 className="text-4xl font-bold text-high text-center">Hi there, Flexer</h1>
                 <h6 className="text-lg text-medium text-center mb-4">Login to access the console</h6>
                 <div className='relative w-full' >
-                    <CustomBtn title={publicKey ? 'login' : 'connect wallet'}  className={` border-2 bg-accent border-accent text-[#1D1D1D]  py-2 px-6 mx-auto`} 
+                    <CustomBtn title={connected ? 'login' : 'connect wallet'}  className={` border-2 bg-accent border-accent text-[#1D1D1D]  py-2 px-6 mx-auto`} 
                         onClick={handleWalletConnector} 
                     />
                     {/* <small>
