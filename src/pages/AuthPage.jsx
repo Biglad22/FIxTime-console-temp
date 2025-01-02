@@ -15,7 +15,7 @@ const AuthPage = () => {
     const navigate = useNavigate();
 
     const handleWalletConnector = async()=>{
-        if(publicKey) navigate('/dashboard');
+        if(connected || publicKey) navigate('/dashboard');
         else{
             console.log(wallets);
             
