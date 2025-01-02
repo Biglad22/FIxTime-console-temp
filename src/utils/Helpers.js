@@ -51,8 +51,7 @@ export function formatAndElapsedTime(dateInput) { //FOR FORMATTING DATES TO REAS
 
 export const throttle =(func, delay)=>{ //throttle FUNCTION TO HELP BUTTONS
   let inThrottle;
-  console.log(delay, inThrottle);
-  
+    
   return function (...arg) {
     if(!inThrottle){
       func.apply(this, arg)

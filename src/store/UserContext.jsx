@@ -95,7 +95,7 @@ export const UseProvider = ({ children }) => {
             if (!isOnline) throw new Error("Please check internet connection");
 
             let userWallet; //wallet address is stored here
-
+            
             await connect();
             userWallet = publicKey?.toString();
             console.log(userWallet);
