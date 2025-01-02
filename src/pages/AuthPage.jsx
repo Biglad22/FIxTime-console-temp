@@ -49,6 +49,7 @@ const AuthPage = () => {
                     // Clean up and handle the error
                     window.onfocus = null;
                     disconnect();
+                    select(null);
                     setMasterErr(error.message);
                     console.error(error);
                 }finally{
