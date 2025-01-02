@@ -22,7 +22,7 @@ function DashBoard({className=''}) {
     const {connected, publicKey, connect} = useWallet();
     const { //access userContext
         reconnectWallet, isOnline, setMasterErr, isClaiming, setIsClaiming, 
-        isStaking, setIsStaking, isUnstaking, setIsUnstaking, isMobile
+        isStaking, setIsStaking, isUnstaking, setIsUnstaking
     } = useContext(userContext);
 
 
@@ -31,6 +31,7 @@ function DashBoard({className=''}) {
         try {
             if(!isOnline) throw new Error("please check internet connection");
             await reconnectWallet(wallet);
+            setMasterErr(null)
         } 
         catch (error) {
             setMasterErr(error.message)
