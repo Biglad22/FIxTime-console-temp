@@ -17,8 +17,6 @@ function Refresh() {
             setIsRefreshing(true);
 
             /// CHECK IF ANY WALLET IS STILL CONNECTED BEFORE FETCHING DATA
-            console.log(wallet);
-            
             if (!connected || !wallet) {
                 await disconnect(); //SINCE CONNECTED AND WALLET MAY NOT HAVE BEEN CHANGED, DISCONNECTING IS FIRST REQUIRED
                 throw new Error("Please reconnect your wallet");

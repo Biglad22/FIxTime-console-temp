@@ -99,8 +99,16 @@ export const UseProvider = ({ children }) => {
             setMasterErr(null); // Reset master error
             
         } catch (error) {
-            setMasterErr(error.message);
-            throw Error(error.message);
+            let msg;
+            if (error.message.includes("User rejected")) {
+                msg = "You rejected the wallet connection. Please try again.";
+            } else if (error.message.includes("No wallet")) {
+                msg = "No wallet found. Please install a compatible mobile wallet.";
+            } else {
+                msg = "An unexpected error occurred. Please try again later.";
+            }
+            setMasterErr(msg);
+            throw Error(msg);
         }
     };
 
