@@ -19,28 +19,17 @@ const AuthPage = () => {
         else{
 
             if(isMobile){
-                console.log(wallets[0]);
                 try {
 
-                    try {
-                       
-                        
-                        select(wallets[0]);
-                    } catch (error) {
-                        if (error.message === "User rejected the request") {
-                            console.error("User closed the wallet selection prompt without choosing.");
-                            // Handle cancellation
-                        } else {
-                            throw error; // Re-throw for other types of errors
-                        }
-                    }
+                    console.log(wallets[0]);
+                    select(wallets[0]);
+                    console.log(wallets[0]);
                     
-        
                     // Wait for the connection to establish
                     if (!connected) await connectNewWallet();
 
                 } catch (error) {
-
+                    select(wallets[0]);
                     disconnect();
                     setMasterErr(error.message);
                 }

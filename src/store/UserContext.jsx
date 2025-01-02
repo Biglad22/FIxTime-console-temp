@@ -97,10 +97,9 @@ export const UseProvider = ({ children }) => {
             let userWallet; //wallet address is stored here
 
             await connect();
+            userWallet = publicKey?.toString();
+            console.log(userWallet);
             
-            userWallet = publicKey.toString();
-
-
             await fetchUser(userWallet); // Fetch user data
             setMasterErr(null); // Reset master error
             
