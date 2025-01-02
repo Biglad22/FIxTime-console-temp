@@ -48,6 +48,7 @@ const AuthPage = () => {
                 } catch (error) {
                     // Clean up and handle the error
                     window.onfocus = null;
+                    disconnect();
                     setMasterErr(error.message);
                     console.error(error);
                 }finally{

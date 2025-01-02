@@ -96,7 +96,7 @@ export const UseProvider = ({ children }) => {
         try {
             if (!isOnline) throw new Error("Please check internet connection");
 
-            await connect();
+            await connect()
 
             if(!connecting && !connected) throw new Error("something went wrong, refresh page and try again");
             // publicKey?.toString();
@@ -104,6 +104,8 @@ export const UseProvider = ({ children }) => {
             setMasterErr(null); // Reset master error
             
         } catch (error) {
+
+
             let msg;
             if (error.message.includes("User rejected")) {
                 msg = "You rejected the wallet connection. Please try again.";
