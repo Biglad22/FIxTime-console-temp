@@ -13,46 +13,55 @@ const AuthPage = () => {
     const {masterErr, linkWallet, showWallets, isMobile, setMasterErr, connectNewWallet} = useContext(userContext);
     const navigate = useNavigate();
 
-    const handleWalletConnector = async()=>{
-        if(connected || publicKey) navigate('/dashboard');
-        else{
-            if(isMobile){
+    const handleWalletConnector = async () => {
+        if (connected || publicKey) {
+            navigate('/dashboard');
+        } else {
+            if (isMobile) {
                 try {
                     console.log(wallets[0]);
                     select(wallets[0]);
                     console.log(wallets[0]);
-                
-                    let errorOccurred = false; // Flag to track errors
-                
-                    // Set up the onfocus listener
-                    window.onfocus = () => {
-                        try {
-                            if ('_authorizationResult' in wallets[0].adapter && wallets[0].adapter._authorizationResult) return;
-                            throw new Error("Please select a wallet to continue");
-                        } catch (error) {
-                            errorOccurred = true; // Set the flag
-                            window.onfocus = null; // Clean up the listener
-                            throw error; // Propagate the error
-                        }
-                    };
-                
-                    // Wait for the connection to establish
-                    if (!connected) await connectNewWallet();
-                
-                    if (errorOccurred) {
-                        throw new Error("Process aborted due to wallet selection issue");
+    
+                    // Create a Promise to handle the focus event
+                    const waitForAuthorization = new Promise((resolve, reject) => {
+                        const handleFocus = () => {
+                            // Check authorization status
+                            if ('_authorizationResult' in wallets[0].adapter && wallets[0].adapter._authorizationResult) {
+                                resolve(); // Authorization successful
+                            } else {
+                                reject(new Error("Please select a wallet to continue")); // Throw an error
+                            }
+                        };
+    
+                        // Attach the focus event listener
+                        window.addEventListener('focus', handleFocus);
+    
+                        // Clean up the event listener on resolve or reject
+                        const cleanUp = () => {
+                            window.removeEventListener('focus', handleFocus);
+                        };
+                        resolve.finally(cleanUp);
+                        reject.finally(cleanUp);
+                    });
+    
+                    // Wait for the wallet to connect or handle the focus error
+                    if (!connected) {
+                        await Promise.race([connectNewWallet(), waitForAuthorization]);
                     }
-                
+    
                 } catch (error) {
-                    window.onfocus = null; // Clean up the listener
+                    // Clean up and handle the error
+                    window.onfocus = null;
                     setMasterErr(error.message);
-                    console.log(error);
+                    console.error(error);
                 }
-                
-            }else linkWallet(true);
-        } 
-            
-    }
+            } else {
+                linkWallet(true);
+            }
+        }
+    };
+    
 
 
     return(
