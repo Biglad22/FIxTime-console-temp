@@ -6,6 +6,7 @@ import { CustomBtn } from "../Buttons/FilledBtn";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useNavigate } from "react-router-dom";
 import { throttle } from "../../utils/Helpers";
+import { useConnectionHandler } from "../../hooks/useConnectionHandler";
 
 /// NAVBAR 
 // this is the top bar navigation section
@@ -13,8 +14,9 @@ function NavBar(){
 
     const {wallet, disconnect} = useWallet(); // ACCESS WALLET FUNCTIONS 
     const navigate = useNavigate();
-    const {hiddenAddress, linkWallet, isOnline, setMasterErr} = useContext(userContext);
+    const {hiddenAddress, isOnline, setMasterErr} = useContext(userContext);
     const[icon, setIcon] = useState('menu'); // stores BOXICON assign name for icons used in menu button
+    const {handleWalletConnection} = useConnectionHandler();
 
     ///handle menu open and close || switching of menu button icon
     // i'm only using icon value to conditionally display menu tray on small screens because of speed 
@@ -38,7 +40,7 @@ function NavBar(){
 
     const handleConnection = throttle(()=>{
         handleOpenMenu()
-        linkWallet(true);
+        handleWalletConnection()
     }, 5000);
 
 

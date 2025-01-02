@@ -1,71 +1,71 @@
 import { CustomBtn } from '../components/Buttons/FilledBtn';
-import { useContext, useMemo} from 'react';
+import { useContext} from 'react';
 import { userContext } from '../store/UserContext';
 import WalletConnector from '../components/auth/wallectConnector'
 import { useWallet } from '@solana/wallet-adapter-react';
 import React  from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useConnectionHandler } from '../hooks/useConnectionHandler';
 
 //User authentication block 
 /// authenticate user and push them to their dashboard
 const AuthPage = () => {
-    const {wallets, select, publicKey, connected, connecting, wallet} = useWallet();
-    const {masterErr, linkWallet, showWallets, isMobile, setMasterErr, connectNewWallet} = useContext(userContext);
-    const navigate = useNavigate();
+    const { publicKey, connected} = useWallet();
+    const {masterErr, showWallets} = useContext(userContext);
+    const {handleWalletConnection} = useConnectionHandler();
 
     // const isConnected = useMemo(()=> ((!isMobile && wallet && wallet.adapter.wwallet.adapter.wallet.accounts.length > 0) 
     // || (isMobile && '_authorizationResult' in wallets[0].adapter && wallets[0].adapter._authorizationResult)
     // || (publicKey || connected)),[connecting, connected, publicKey, wallet, wallets]);
 
-    const handleWalletConnector = async () => {
-        if (connected || publicKey) {
-            navigate('/dashboard');
-        }
-        else{
-            if (isMobile) {
-                let handleFocus;
-                try {
-                    console.log(wallets[0]);
-                    select(wallets[0]);
-                    console.log(wallets[0]);
+    // const handleWalletConnector = async () => {
+    //     if (connected || publicKey) {
+    //         navigate('/dashboard');
+    //     }
+    //     else{
+    //         if (isMobile) {
+    //             let handleFocus;
+    //             try {
+    //                 console.log(wallets[0]);
+    //                 select(wallets[0]);
+    //                 console.log(wallets[0]);
     
-                    // Create a Promise to handle the focus event
-                    const waitForAuthorization = new Promise((resolve, reject) => {
+    //                 // Create a Promise to handle the focus event
+    //                 const waitForAuthorization = new Promise((resolve, reject) => {
 
-                        handleFocus = () => {
-                            // Check authorization status
-                            if ('_authorizationResult' in wallets[0].adapter && wallets[0].adapter._authorizationResult) {
-                                resolve(); // Authorization successful
-                            } else {
-                                reject(new Error("error, please refresh page and select a wallet to continue")); // Throw an error
-                            }
-                        };
+    //                     handleFocus = () => {
+    //                         // Check authorization status
+    //                         if ('_authorizationResult' in wallets[0].adapter && wallets[0].adapter._authorizationResult) {
+    //                             resolve(); // Authorization successful
+    //                         } else {
+    //                             reject(new Error("error, please refresh page and select a wallet to continue")); // Throw an error
+    //                         }
+    //                     };
     
-                        // Attach the focus event listener
-                        window.addEventListener('focus', handleFocus);
+    //                     // Attach the focus event listener
+    //                     window.addEventListener('focus', handleFocus);
                         
     
-                    });
+    //                 });
     
-                    // Wait for the wallet to connect or handle the focus error
-                    if (!connected) {
-                        await Promise.race([connectNewWallet(), waitForAuthorization]);
-                    }
+    //                 // Wait for the wallet to connect or handle the focus error
+    //                 if (!connected) {
+    //                     await Promise.race([connectNewWallet(), waitForAuthorization]);
+    //                 }
     
-                } catch (error) {
-                    // Clean up and handle the error
-                    window.onfocus = null;
+    //             } catch (error) {
+    //                 // Clean up and handle the error
+    //                 window.onfocus = null;
                     
-                    setMasterErr(error.message);
-                    console.error(error);
-                }finally{
-                    window.removeEventListener('focus', handleFocus);
-                }
-            } else {
-                linkWallet(true);
-            }
-        }
-    };
+    //                 setMasterErr(error.message);
+    //                 console.error(error);
+    //             }finally{
+    //                 window.removeEventListener('focus', handleFocus);
+    //             }
+    //         } else {
+    //             linkWallet(true);
+    //         }
+    //     }
+    // };
     
 
 
@@ -76,14 +76,8 @@ const AuthPage = () => {
                 <h6 className="text-lg text-medium text-center mb-4">Login to access the console</h6>
                 <div className='relative w-full' >
                     <CustomBtn title={(connected || publicKey)? 'login' : 'connect wallet'}  className={` border-2 bg-accent border-accent text-[#1D1D1D]  py-2 px-6 mx-auto`} 
-                        onClick={handleWalletConnector} 
+                        onClick={handleWalletConnection} 
                     />
-                    {/* <small>
-                        {wallet?.adapter?.wallet?.accounts} 
-                    </small>
-                    <small>
-                        {wallet} 
-                    </small> */}
                     {masterErr && (<small className='capitalize w-full text-center p-2 text-medium absolute top-full'>{masterErr}</small>) }
                     
                 </div>
