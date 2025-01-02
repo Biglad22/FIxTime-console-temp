@@ -17,6 +17,7 @@ const customApi = axios.create({
 export const getUserDetails = async (wallet) =>{
     try {
         return  await customApi.get(`/${wallet}`); 
+        
     } catch (err) {
         throw new Error(err.response.data.message);
     }

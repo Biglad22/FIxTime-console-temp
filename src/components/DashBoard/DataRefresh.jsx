@@ -28,7 +28,7 @@ function Refresh() {
             }
     
             // Continue with the refresh process
-            await reconnectWallet();
+            await reconnectWallet(publicKey.toString());
     
         } catch (error) {
 

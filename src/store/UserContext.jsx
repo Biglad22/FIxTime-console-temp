@@ -93,19 +93,28 @@ export const UseProvider = ({ children }) => {
     const connectNewWallet = async () => {
         try {
             if (!isOnline) throw new Error("Please check internet connection");
-
-            let userWallet; //wallet address is stored here
-            
             await connect();
-            userWallet = publicKey?.toString();
-            console.log(userWallet);
-            
-            await fetchUser(userWallet); // Fetch user data
+            // publicKey?.toString();
+            // await fetchUser(userWallet); // Fetch user data
             setMasterErr(null); // Reset master error
             
         } catch (error) {
             setMasterErr(error.message);
             throw Error(error.message);
+        }
+    };
+
+    // Handle wallet reconnection
+    const reconnectWallet = async (paramWallet) => {
+        try {
+
+            if (!isOnline) throw new Error("Please check internet connection");
+            await fetchUser(paramWallet); // Fetch user data
+            setMasterErr(null); // Reset master error
+
+        } catch (error) {
+            setMasterErr(error.message);
+            // throw new Error(error.message);
         }
     };
 
@@ -121,20 +130,10 @@ export const UseProvider = ({ children }) => {
             refreshTimer(); //restart refresh timer
             setMasterErr(null); //clear error message
 
-        } catch (error) {throw new Error(error.message)}
-    };
-
-    // Handle wallet reconnection
-    const reconnectWallet = async (paramWallet) => {
-        try {
-
-            if (!isOnline) throw new Error("Please check internet connection");
-            await fetchUser(paramWallet); // Fetch user data
-            setMasterErr(null); // Reset master error
-
         } catch (error) {
-            setMasterErr(error.message);
-            // throw new Error(error.message);
+            console.log(error);
+            
+            throw new Error(error.message)
         }
     };
 

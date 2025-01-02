@@ -8,7 +8,7 @@ export const RoutesGuard = ({children}) => {
     const {wallet, publicKey} = useWallet(); //ACCESS WALLET FUNCTIONS
     const {isOnline} = useContext(userContext);
 
-    if ( !isOnline || !publicKey){ //IF NO VALID WALLET IS FOUND REDIRECT TO AUTH PAGE  
+    if ( !isOnline || !wallet){ //IF NO VALID WALLET IS FOUND REDIRECT TO AUTH PAGE  
         return(<Navigate to='/' />)
     }
 
