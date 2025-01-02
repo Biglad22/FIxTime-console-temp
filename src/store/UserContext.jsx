@@ -65,6 +65,7 @@ export const UseProvider = ({ children }) => {
 
         window.addEventListener("online", handleOnline);
         window.addEventListener("offline", handleOnline);
+        window.addEventListener("focusout", ()=>console.log('focus out'));
 
         // Initial check
         handleOnline();
