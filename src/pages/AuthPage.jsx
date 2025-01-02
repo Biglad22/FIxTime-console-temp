@@ -5,19 +5,16 @@ import WalletConnector from '../components/auth/wallectConnector'
 import { useWallet } from '@solana/wallet-adapter-react';
 import React  from 'react';
 import { useNavigate } from 'react-router-dom';
-import {WalletMultiButton} from "@solana/wallet-adapter-react-ui";
 
 //User authentication block 
 /// authenticate user and push them to their dashboard
 const AuthPage = () => {
-    const {wallets, select, publicKey, wallet, connected} = useWallet();
+    const {wallets, select, publicKey, connected} = useWallet();
     const {masterErr, linkWallet, showWallets, isMobile, setMasterErr, connectNewWallet} = useContext(userContext);
     const navigate = useNavigate();
 
     const handleWalletConnector = async()=>{
-        if((!isMobile && wallet.adapter.wallet.accounts.length < 1) || (isMobile && wallet.adapter._authorizationResult.accounts.length < 1)){
-            navigate('/dashboard');  
-        } 
+        if(connected || publicKey) navigate('/dashboard');
         else{
             console.log(wallets);
             
