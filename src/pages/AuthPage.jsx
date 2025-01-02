@@ -23,8 +23,14 @@ const AuthPage = () => {
                     select(wallets[0]);
                     console.log(wallets[0]);
                     
+                    window.onfocus = () => {
+                        if ('_authorizationResult' in wallets[0].adapter && wallets[0].adapter._authorizationResult) return;
+                        throw new Error("please select a wallet to continue");
+                    }
+                    
                     // Wait for the connection to establish
                     if (!connected) await connectNewWallet();
+
 
                 } catch (error) {
                     select(wallets[0]);
@@ -36,6 +42,7 @@ const AuthPage = () => {
         } 
             
     }
+
 
     return(
         <section>
