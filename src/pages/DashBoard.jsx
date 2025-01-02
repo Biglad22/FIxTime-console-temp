@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { StakePrompt } from "../features/stakeToken/Index";
 import { UnstakePrompt } from "../features/unstake/Index";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { transact } from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
+
 
 
 //MAIN DASHBOARD

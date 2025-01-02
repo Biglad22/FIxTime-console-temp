@@ -8,7 +8,7 @@ import { throttle } from "../../utils/Helpers";
 function Refresh() {
     const { refreshTime, reconnectWallet, setMasterErr } = useContext(userContext);
     const navigate = useNavigate();
-    const { connected, publicKey, wallet,disconnect } = useWallet();
+    const { connected, publicKey, wallet, disconnect, isMobile } = useWallet();
     const [isRefreshing, setIsRefreshing] = useState(false);
 
     
@@ -19,7 +19,17 @@ function Refresh() {
             /// CHECK IF ANY WALLET IS STILL CONNECTED BEFORE FETCHING DATA
             console.log(wallet);
             
-            if (!connected || !wallet || wallet.adapter.wallet.accounts.length < 1) {
+            if (!connected || !wallet) {
+                await disconnect(); //SINCE CONNECTED AND WALLET MAY NOT HAVE BEEN CHANGED, DISCONNECTING IS FIRST REQUIRED
+                throw new Error("Please reconnect your wallet");
+            }
+
+            if(!isMobile && wallet.adapter.wallet.accounts.length < 1){
+                await disconnect(); //SINCE CONNECTED AND WALLET MAY NOT HAVE BEEN CHANGED, DISCONNECTING IS FIRST REQUIRED
+                throw new Error("Please reconnect your wallet");
+            }
+
+            if(isMobile && wallet._authorizationResult.accounts.length < 1){
                 await disconnect(); //SINCE CONNECTED AND WALLET MAY NOT HAVE BEEN CHANGED, DISCONNECTING IS FIRST REQUIRED
                 throw new Error("Please reconnect your wallet");
             }
