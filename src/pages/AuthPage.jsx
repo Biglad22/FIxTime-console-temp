@@ -12,7 +12,8 @@ const AuthPage = () => {
     const {wallets, select, publicKey, connected, connecting, wallet} = useWallet();
     const {masterErr, linkWallet, showWallets, isMobile, setMasterErr, connectNewWallet} = useContext(userContext);
     const navigate = useNavigate();
-    const isConnected = useMemo(()=> ((!isMobile && wallet?.adapter.wallet.accounts.length > 0) 
+
+    const isConnected = useMemo(()=> ((!isMobile && wallet && wallet.adapter.wallet.accounts.length > 0) 
     || (isMobile && '_authorizationResult' in wallets[0].adapter && wallets[0].adapter._authorizationResult)
     || (publicKey || connected)),[connecting, connected, publicKey, wallet, wallets]);
 
@@ -42,6 +43,7 @@ const AuthPage = () => {
     
                         // Attach the focus event listener
                         window.addEventListener('focus', handleFocus);
+                        
     
                     });
     
@@ -53,6 +55,7 @@ const AuthPage = () => {
                 } catch (error) {
                     // Clean up and handle the error
                     window.onfocus = null;
+                    
                     setMasterErr(error.message);
                     console.error(error);
                 }finally{
